@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="governance-policy-layout" style="display:grid; grid-template-columns:220px 1fr; gap:24px; margin-top:24px; align-items:start;">
+
+    <!-- Sidebar Navigation -->
+    <aside class="glass-panel" style="padding:20px; position:sticky; top:88px;">
+        <p style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); margin-bottom:12px;">On this page</p>
+        <nav style="display:flex; flex-direction:column; gap:6px;">
+            <a href="#open-data-policy" style="font-size:0.85rem; color:var(--accent-cyan); text-decoration:none; padding:6px 8px; border-radius:var(--radius); transition:background 0.2s;">Open data policy</a>
+            <a href="#guiding-principles" style="font-size:0.85rem; color:var(--text-secondary); text-decoration:none; padding:6px 8px; border-radius:var(--radius); transition:background 0.2s;">Guiding principles</a>
+            <a href="#metadata-schema" style="font-size:0.85rem; color:var(--text-secondary); text-decoration:none; padding:6px 8px; border-radius:var(--radius); transition:background 0.2s;">Metadata schema</a>
+            <a href="#quality-rubric" style="font-size:0.85rem; color:var(--text-secondary); text-decoration:none; padding:6px 8px; border-radius:var(--radius); transition:background 0.2s;">Quality rubric</a>
+            <a href="#dataset-lifecycle" style="font-size:0.85rem; color:var(--text-secondary); text-decoration:none; padding:6px 8px; border-radius:var(--radius); transition:background 0.2s;">Dataset lifecycle</a>
+            <a href="#stewardship" style="font-size:0.85rem; color:var(--text-secondary); text-decoration:none; padding:6px 8px; border-radius:var(--radius); transition:background 0.2s;">Stewardship</a>
+        </nav>
+        <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-glass);">
+            <span style="font-size:0.7rem; font-weight:600; color:var(--text-muted); letter-spacing:0.04em;">Policy · v1.0 (draft)</span>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- Page Header -->
+        <div class="glass-panel" style="padding:28px 32px; margin-bottom:24px;">
+            <h1 style="font-size:1.6rem; font-weight:700; letter-spacing:0.02em; margin-bottom:10px;">Open data governance &amp; metadata standard</h1>
+            <p style="font-size:0.95rem; color:var(--text-secondary); line-height:1.7; max-width:860px;">How ARU's IUC research community describes, shares and stewards IoT sensor datasets — aligned to Dublin Core and the FAIR data principles, extended for sensor-specific context.</p>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="glass-panel" style="padding:28px 32px; margin-bottom:20px;" id="open-data-policy">
+            <h2 style="font-size:1.1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:14px;">1. Open data policy</h2>
+            <p style="color:var(--text-secondary); line-height:1.75; margin-bottom:12px;">All IoT sensor datasets generated under VLIR-UOS / IUC project funding at ARU are open by default. Researchers register datasets in the IoT system at the point of deployment; access controls and embargoes are exceptions, requested in writing and time-bound to a maximum of 24 months.</p>
+            <p style="color:var(--text-secondary); line-height:1.75;">Datasets containing personal data, location data linked to vulnerable populations, or commercially sensitive observations are reviewed by the ICT &amp; SSIC stewardship board before publication and may be released under restricted-access licenses.</p>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="glass-panel" style="padding:28px 32px; margin-bottom:20px;" id="guiding-principles">
+            <h2 style="font-size:1.1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:18px;">2. Guiding principles</h2>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+                <div class="glass-panel" style="padding:18px 20px; background:rgba(138,43,226,0.08); border-color:rgba(138,43,226,0.2);">
+                    <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-purple); margin-bottom:6px;">Findable</p>
+                    <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;">Every dataset has a persistent identifier (DOI on approval) and rich, indexed metadata.</p>
+                </div>
+                <div class="glass-panel" style="padding:18px 20px; background:rgba(77,119,255,0.08); border-color:rgba(77,119,255,0.2);">
+                    <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-cyan); margin-bottom:6px;">Accessible</p>
+                    <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;">Metadata is always public; data files are retrievable via a stated protocol.</p>
+                </div>
+                <div class="glass-panel" style="padding:18px 20px; background:rgba(0,255,157,0.06); border-color:rgba(0,255,157,0.2);">
+                    <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-mint); margin-bottom:6px;">Interoperable</p>
+                    <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;">Dublin Core + IoT extension; SI units; ISO 8601 dates; WGS84 coordinates.</p>
+                </div>
+                <div class="glass-panel" style="padding:18px 20px; background:rgba(255,193,7,0.06); border-color:rgba(255,193,7,0.2);">
+                    <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-gold); margin-bottom:6px;">Reusable</p>
+                    <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;">Open licenses preferred (CC0, CC BY 4.0); provenance and quality are explicit.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="glass-panel" style="padding:28px 32px; margin-bottom:20px;" id="metadata-schema">
+            <h2 style="font-size:1.1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">3. Metadata schema</h2>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">The ARU IoT metadata schema combines the 15 Dublin Core Metadata Element Set elements with an iot: and aru: extension namespace for sensor-specific context.</p>
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Dublin Core / extension</th>
+                        <th>Required</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="mono-text">title</td>
+                        <td>dc:title</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">Concise, human-readable label.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">description</td>
+                        <td>dc:description</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">≥ 50 words, plain-language abstract.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">domain</td>
+                        <td>dc:subject</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">Controlled list: Transport, Housing, Heritage, Energy, Water, Air Quality, Agriculture, Health.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">sensorType</td>
+                        <td>iot:sensorType (ext.)</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">Controlled list maintained by ICT &amp; SSIC.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">location</td>
+                        <td>dc:coverage</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">Place name + lat/lon decimal degrees (WGS84).</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">startDate / endDate</td>
+                        <td>dc:date</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">ISO 8601. Blank end = ongoing.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">updateFrequency</td>
+                        <td>iot:samplingInterval (ext.)</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">Human-readable (e.g. "1 min", "15 s").</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">units</td>
+                        <td>iot:units (ext.)</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">SI preferred; mixed allowed if comma-separated.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">qualityScore</td>
+                        <td>aru:qualityScore (ext.)</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">0.0–5.0; rubric defined below.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">license</td>
+                        <td>dc:rights</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">CC0, CC BY 4.0 preferred.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">format</td>
+                        <td>dc:format</td>
+                        <td style="color:var(--accent-gold); font-weight:600;">Optional</td>
+                        <td style="color:var(--text-secondary);">CSV, Parquet, JSON, NetCDF, …</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">doi</td>
+                        <td>dc:identifier</td>
+                        <td style="color:var(--accent-gold); font-weight:600;">Optional</td>
+                        <td style="color:var(--text-secondary);">Reserved on approval.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">researcher</td>
+                        <td>dc:creator</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">Lead researcher; ORCID recommended.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">department</td>
+                        <td>dc:contributor</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">ARU department or partner institution.</td>
+                    </tr>
+                    <tr>
+                        <td class="mono-text">iucProject</td>
+                        <td>aru:iucProject (ext.)</td>
+                        <td style="color:var(--accent-mint); font-weight:600;">Required</td>
+                        <td style="color:var(--text-secondary);">VLIR-UOS / IUC project code.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="glass-panel" style="padding:28px 32px; margin-bottom:20px;" id="quality-rubric">
+            <h2 style="font-size:1.1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px;">4. Data quality rubric</h2>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:18px;">The aru:qualityScore field uses a 0.0–5.0 scale, assigned by the lead researcher and verified at stewardship review.</p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:var(--radius); background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-mint);">
+                    <span class="mono-text" style="font-weight:700; color:var(--accent-mint); min-width:80px;">5.0</span>
+                    <span style="font-size:0.9rem; color:var(--text-secondary);">Reference-grade: Independently calibrated, peer-reviewed, gap-free.</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:var(--radius); background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-cyan);">
+                    <span class="mono-text" style="font-weight:700; color:var(--accent-cyan); min-width:80px;">4.0</span>
+                    <span style="font-size:0.9rem; color:var(--text-secondary);">Production-grade: Calibrated, gap-checked, documented preprocessing.</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:var(--radius); background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-purple);">
+                    <span class="mono-text" style="font-weight:700; color:var(--accent-purple); min-width:80px;">3.0</span>
+                    <span style="font-size:0.9rem; color:var(--text-secondary);">Research-grade: Raw + basic QC; known outliers documented.</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:var(--radius); background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-gold);">
+                    <span class="mono-text" style="font-weight:700; color:var(--accent-gold); min-width:80px;">2.0</span>
+                    <span style="font-size:0.9rem; color:var(--text-secondary);">Pilot-grade: Raw data with acknowledged gaps; use with caution.</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:var(--radius); background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-red);">
+                    <span class="mono-text" style="font-weight:700; color:var(--accent-red); min-width:80px;">1.0</span>
+                    <span style="font-size:0.9rem; color:var(--text-secondary);">Experimental: Prototype deployment; not suitable for downstream conclusions.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5 -->
+        <div class="glass-panel" style="padding:28px 32px; margin-bottom:20px;" id="dataset-lifecycle">
+            <h2 style="font-size:1.1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:18px;">5. Dataset lifecycle</h2>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
+                <div class="glass-panel" style="padding:18px; text-align:center; background:rgba(255,255,255,0.02);">
+                    <span class="mono-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.06em;">01</span>
+                    <p style="font-size:0.85rem; font-weight:600; margin-top:8px; margin-bottom:4px;">Registration</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5;">Researcher submits metadata via the system registration form at the start of deployment.</p>
+                </div>
+                <div class="glass-panel" style="padding:18px; text-align:center; background:rgba(255,255,255,0.02);">
+                    <span class="mono-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.06em;">02</span>
+                    <p style="font-size:0.85rem; font-weight:600; margin-top:8px; margin-bottom:4px;">Stewardship review</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5;">ICT &amp; SSIC checks completeness, controlled-vocabulary use and license compatibility.</p>
+                </div>
+                <div class="glass-panel" style="padding:18px; text-align:center; background:rgba(255,255,255,0.02);">
+                    <span class="mono-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.06em;">03</span>
+                    <p style="font-size:0.85rem; font-weight:600; margin-top:8px; margin-bottom:4px;">Publication</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5;">Dataset becomes discoverable; DOI is reserved; download link is published.</p>
+                </div>
+                <div class="glass-panel" style="padding:18px; text-align:center; background:rgba(255,255,255,0.02);">
+                    <span class="mono-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.06em;">04</span>
+                    <p style="font-size:0.85rem; font-weight:600; margin-top:8px; margin-bottom:4px;">Maintenance</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5;">Researcher updates end date, record count and quality score as deployment evolves.</p>
+                </div>
+                <div class="glass-panel" style="padding:18px; text-align:center; background:rgba(255,255,255,0.02);">
+                    <span class="mono-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.06em;">05</span>
+                    <p style="font-size:0.85rem; font-weight:600; margin-top:8px; margin-bottom:4px;">Retirement</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5;">After 7 years of inactivity, dataset is archived; metadata remains permanently citable.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6 -->
+        <div class="glass-panel" style="padding:28px 32px; margin-bottom:24px;" id="stewardship">
+            <h2 style="font-size:1.1rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:14px;">6. Stewardship &amp; contacts</h2>
+            <p style="color:var(--text-secondary); line-height:1.75; margin-bottom:12px;">Day-to-day stewardship of the IoT system is delegated to the ICT &amp; SSIC office, with policy oversight from the postgraduate research committee. The VLIR-UOS reporting team draws on the analytics dashboard for annual reporting cycles.</p>
+            <p style="font-size:0.9rem; color:var(--text-primary); line-height:1.6;">Questions, policy exceptions and embargo requests: <span class="mono-text" style="color:var(--accent-cyan);">iot-atlas@aru.example</span></p>
+        </div>
+
+    </main>
+</div>
+{% endblock %}

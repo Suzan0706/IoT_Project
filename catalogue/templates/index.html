@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<style>
+.scroll-ribbon { animation: slide 30s linear infinite; }
+@keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+</style>
+
+<!-- HERO BANNER -->
+<section class="border-b border-slate-800/80 px-6 pt-12 pb-16">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-[11px] font-mono text-slate-500 mb-4 tracking-wide">
+            Catalogue Live / Edition 01 · MMXXVI / {{ total_registered|stringformat:"04d" }} entries / ISSN 0000-0000 · Open Access / Project 5 · Information Science · IUC
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            The atlas of things that sense our cities.
+        </h1>
+        <p class="text-slate-400 max-w-3xl mb-8 leading-relaxed">
+            A curated, Dublin Core–aligned catalogue of IoT sensor deployments across ARU's IUC research projects — transport, housing, heritage, energy, water and more — engineered to make research data findable, accessible, interoperable and reusable.
+        </p>
+        <div class="flex items-center gap-4">
+            <a href="#browse" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">Browse the catalogue</a>
+            <a href="{% url 'register_dataset' %}" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors">Register a dataset</a>
+        </div>
+    </div>
+</section>
+
+<!-- SEARCH & FILTERS -->
+<section id="browse" class="border-b border-slate-800/80 px-6 pt-12 pb-8">
+    <div class="max-w-7xl mx-auto">
+        <form method="GET" action="{% url 'home' %}" class="flex flex-wrap gap-3 items-end mb-8">
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search datasets (e.g., PM2.5, BRT, sensor type)..." class="flex-1 min-w-[200px] px-4 py-2.5 bg-[#0b0d19] border border-slate-800/80 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <select name="domain" class="px-4 py-2.5 bg-[#0b0d19] border border-slate-800/80 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500">
+                <option value="">All Domains</option>
+                {% for d in domains %}
+                    <option value="{{ d.slug }}" {% if selected_domain == d.slug %}selected{% endif %}>{{ d.name }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="min_score" value="{{ selected_min_score }}" placeholder="Min quality score" step="0.01" min="0" max="5" class="w-40 px-4 py-2.5 bg-[#0b0d19] border border-slate-800/80 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">Apply Filters</button>
+            <a href="{% url 'home' %}" class="px-5 py-2.5 border border-slate-800/80 text-slate-400 hover:text-white text-sm font-medium rounded-lg transition-colors">Clear</a>
+        </form>
+
+        <!-- Domain Tabs -->
+        <div class="flex flex-wrap gap-2 mb-6">
+            <a href="{% url 'home' %}" class="px-3 py-1.5 text-sm rounded-full border border-indigo-500/60 bg-indigo-500/10 text-white font-semibold">All Domains <span class="ml-1 text-xs opacity-70">{{ total_registered }}</span></a>
+            {% for d in domains %}
+            <a href="{% url 'home' %}?domain={{ d.slug }}" class="px-3 py-1.5 text-sm rounded-full border border-slate-800/80 text-slate-400 hover:text-white transition-colors">{{ d.name }} <span class="ml-1 text-xs opacity-70">{{ d.dataset_count|default:"0"|stringformat:"02d" }}</span></a>
+            {% endfor %}
+        </div>
+
+        <!-- Dataset Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for dataset in datasets %}
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5 hover:border-indigo-500/40 transition-all cursor-pointer">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] font-mono text-slate-500 bg-slate-900/50 px-2 py-1 rounded">{{ forloop.counter|stringformat:"02d" }}</span>
+                        <span class="text-[11px] font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/30 px-2 py-1 rounded-full">{{ dataset.domain.name|upper }}</span>
+                    </div>
+                    {% if dataset.status == 'live' %}
+                    <span class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-1 rounded-full">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+                    </span>
+                    {% endif %}
+                </div>
+                <h3 class="text-base font-bold text-white mb-2 leading-snug">{{ dataset.title }}</h3>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">{{ dataset.description|truncatewords:30 }}</p>
+                <div class="grid grid-cols-2 gap-2 text-xs mb-4">
+                    <div><span class="text-slate-500 block">Location</span><span class="text-slate-200">{{ dataset.location }}</span></div>
+                    <div><span class="text-slate-500 block">Period</span><span class="text-slate-200">{{ dataset.start_date|date:"Y-m-d" }} → {{ dataset.end_date|date:"Y-m-d" }}</span></div>
+                    <div><span class="text-slate-500 block">Frequency</span><span class="text-slate-200">{{ dataset.update_frequency }}</span></div>
+                    <div><span class="text-slate-500 block">Downloads</span><span class="text-slate-200">{{ dataset.download_count }}</span></div>
+                </div>
+                <div class="flex items-center justify-between border-t border-slate-800 pt-3">
+                    <div class="text-xs text-slate-500">{{ dataset.researcher.get_full_name|default:dataset.researcher.username }} &middot; {{ dataset.department }}</div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm font-bold text-indigo-300">{{ dataset.quality_score|floatformat:1 }}</span>
+                        <a href="{% url 'dataset_detail' dataset.id %}" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">View record →</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="md:col-span-2 bg-[#11142b] border border-slate-800/80 rounded-xl p-8 text-center">
+                <p class="text-sm text-slate-400">No matching datasets found for the selected filters.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CATALOGUE VITALS -->
+<section class="border-b border-slate-800/80 px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-6">Catalogue vitals</div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-white mb-1">{{ total_registered }}</div>
+                <div class="text-xs text-slate-400 uppercase tracking-wide">Datasets registered</div>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-white mb-1">{{ active_deployments }}</div>
+                <div class="text-xs text-slate-400 uppercase tracking-wide">Active deployments</div>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-white mb-1">{{ total_downloads|default:"0"|intcomma }}</div>
+                <div class="text-xs text-slate-400 uppercase tracking-wide">Sensor records archived</div>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-white mb-1">{{ mean_quality }}</div>
+                <div class="text-xs text-slate-400 uppercase tracking-wide">Mean quality score (0–5)</div>
+            </div>
+        </div>
+        <div class="relative overflow-hidden py-3">
+            <div class="flex whitespace-nowrap text-slate-600 text-sm font-medium scroll-ribbon">
+                {% for d in domains %}
+                <span class="mx-4">{{ d.name }}/{{ d.dataset_count|default:"0"|stringformat:"02d" }}</span><span class="mx-4">•</span>
+                {% endfor %}
+                {% for d in domains %}
+                <span class="mx-4">{{ d.name }}/{{ d.dataset_count|default:"0"|stringformat:"02d" }}</span><span class="mx-4">•</span>
+                {% endfor %}
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0b0d19] via-transparent to-[#0b0d19] pointer-events-none"></div>
+        </div>
+    </div>
+</section>
+
+<!-- RESEARCH DOMAINS -->
+<section class="border-b border-slate-800/80 px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-xl font-bold text-white mb-2">Research domains</h2>
+        <p class="text-sm text-slate-400 mb-8 max-w-3xl">Eight domains. One shared infrastructure for sensing the urban condition. Every domain inherits the same metadata schema...</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {% for d in domains %}
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-[11px] text-slate-500 mb-1">{{ forloop.counter|stringformat:"02d" }}</div>
+                <div class="text-sm font-semibold text-white mb-1">{{ d.name }}</div>
+                <div class="text-xs text-slate-400">{{ d.dataset_count|default:"0" }} datasets</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CURATED MOST CITED -->
+<section class="border-b border-slate-800/80 px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex items-center gap-3 mb-6">
+            <span class="text-xs font-semibold text-indigo-300 bg-indigo-500/10 border border-indigo-500/30 rounded-full px-3 py-1">Curated</span>
+            <span class="text-xs text-slate-500 uppercase tracking-wide">Most cited this season · Datasets researchers are reaching for</span>
+        </div>
+        <div class="bg-[#11142b] border border-slate-800/80 rounded-xl divide-y divide-slate-800/60">
+            {% for dataset in top_datasets|default:datasets|slice:"6" %}
+            <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <div class="text-[11px] text-slate-500 mb-0.5">{{ forloop.counter|stringformat:"02d" }} / {{ dataset.domain.name }}</div>
+                    <div class="text-sm font-semibold text-white">{{ dataset.title }}</div>
+                    <div class="text-xs text-slate-500 mt-1">{{ dataset.location }}</div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs text-slate-400">{{ dataset.quality_score|floatformat:1 }} ★</span>
+                    <span class="text-xs text-slate-500">{{ dataset.download_count }} dl</span>
+                </div>
+            </div>
+            {% empty %}
+            <div class="px-5 py-4 text-sm text-slate-400">No datasets available yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- METADATA PRINCIPLES / FAIR -->
+<section class="border-b border-slate-800/80 px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-xl font-bold text-white mb-6">Metadata principles / Built on FAIR from the first byte.</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-indigo-400 mb-2">F</div>
+                <div class="text-xs text-slate-400 leading-relaxed mb-2">Findable</div>
+                <p class="text-xs text-slate-500 leading-relaxed">Every dataset receives a persistent identifier, rich Dublin Core descriptors, and is indexed by domain, sensor and location.</p>
+                <div class="text-[11px] text-slate-600 mt-3">01 / 04</div>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-indigo-400 mb-2">A</div>
+                <div class="text-xs text-slate-400 leading-relaxed mb-2">Accessible</div>
+                <p class="text-xs text-slate-500 leading-relaxed">Records are retrievable via standard protocols, with explicit licensing and access conditions stated up front.</p>
+                <div class="text-[11px] text-slate-600 mt-3">02 / 04</div>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-indigo-400 mb-2">I</div>
+                <div class="text-xs text-slate-400 leading-relaxed mb-2">Interoperable</div>
+                <p class="text-xs text-slate-500 leading-relaxed">Common vocabularies for sensors, units and frequencies — readable by humans, machines and downstream analytics pipelines.</p>
+                <div class="text-[11px] text-slate-600 mt-3">03 / 04</div>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-5">
+                <div class="text-3xl font-bold text-indigo-400 mb-2">R</div>
+                <div class="text-xs text-slate-400 leading-relaxed mb-2">Reusable</div>
+                <p class="text-xs text-slate-500 leading-relaxed">Clear provenance, quality scoring and citation guidance — so the next researcher can build on, not re-collect, your work.</p>
+                <div class="text-[11px] text-slate-600 mt-3">04 / 04</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="border-b border-slate-800/80 px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <h2 class="text-xl font-bold text-white mb-2">Workflow / From a sensor in the field to a citable record — in three steps.</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-6">
+                <div class="text-xs font-semibold text-indigo-300 mb-3">Step 01</div>
+                <h4 class="text-sm font-bold text-white mb-2">Describe the deployment</h4>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">Fill the metadata form: sensor type, location, units, sampling interval, period, IUC project and ethics statement.</p>
+                <a href="{% url 'register_dataset' %}" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">Submit →</a>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-6">
+                <div class="text-xs font-semibold text-indigo-300 mb-3">Step 02</div>
+                <h4 class="text-sm font-bold text-white mb-2">Validate & assign quality</h4>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">Catalogue stewards check completeness against the schema and assign a quality score from 0 to 5 with rationale.</p>
+                <a href="{% url 'admin_analytics_dashboard' %}" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">Curate →</a>
+            </div>
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-6">
+                <div class="text-xs font-semibold text-indigo-300 mb-3">Step 03</div>
+                <h4 class="text-sm font-bold text-white mb-2">Publish & cite</h4>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">Your dataset gets a citable record, a DOI on request, and surfaces in search and the analytics dashboard.</p>
+                <a href="{% url 'browse_catalogue' %}" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">Publish →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CALL FOR DATA -->
+<section class="border-b border-slate-800/80 px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-8 text-center">
+            <h2 class="text-xl font-bold text-white mb-2">Call for data / Have a sensor deployment that deserves to be found?</h2>
+            <p class="text-sm text-slate-400 max-w-2xl mx-auto mb-6 leading-relaxed">
+                Every deployment matters. Whether it's a prototype on a university roof or a multi-year city-scale array — if it's generating urban data, it belongs in the system.
+            </p>
+            <div class="flex items-center justify-center gap-4">
+                <a href="{% url 'register_dataset' %}" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">Register a dataset</a>
+                <a href="{% url 'governance_policy' %}" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Read the standard first</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

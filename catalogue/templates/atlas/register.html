@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.register-section { max-width: 900px; margin: 40px auto; }
+.register-card { background: var(--surface); border-radius: 12px; padding: 32px; }
+.section-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }
+.section-header h3 { color: var(--accent-purple); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.form-grid.single { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; }
+.form-group.full { grid-column: 1 / -1; }
+.form-group label { font-size: 0.875rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+.form-group .required { color: #ff4d4d; }
+.form-help { font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; }
+.form-group input[readonly] { background: var(--bg); opacity: 0.85; }
+.form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.info-box { background: rgba(0,255,157,0.05); border: 1px solid rgba(0,255,157,0.2); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+.info-box h4 { color: var(--accent-cyan); font-size: 0.85rem; margin-bottom: 8px; }
+.info-box ul { margin: 0; padding-left: 18px; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; }
+.rubric { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.rubric span { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+@media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+</style>
+
+<div class="register-section">
+    <div class="register-card">
+        <div class="section-header">
+            <h2 style="margin:0;">Register <span style="color:var(--accent-purple);">IoT Dataset</span></h2>
+            <p style="margin:6px 0 0; color:var(--text-secondary); font-size:0.9rem;">All fields map to the ARU metadata schema (Dublin Core + IoT extension). Required for discoverability and VLIR-UOS reporting.</p>
+        </div>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="info-box">
+            <h4>Before you submit</h4>
+            <ul>
+                <li>Use a descriptive title — search depends on it.</li>
+                <li>State units explicitly (µg/m³, °C, kWh).</li>
+                <li>Open licenses (CC BY / CC0) maximise reuse.</li>
+                <li>Active deployments can be registered now and updated later.</li>
+            </ul>
+            <h4 style="margin-top:12px;">Quality rubric</h4>
+            <div class="rubric">
+                <span style="background:rgba(0,255,157,0.15);color:#00ff9d;">5.0 — Calibrated, peer reviewed</span>
+                <span style="background:rgba(0,255,157,0.10);color:#00cc7d;">4.0 — Calibrated, gap-checked</span>
+                <span style="background:rgba(255,193,7,0.15);color:#ffc107;">3.0 — Raw, basic QC</span>
+                <span style="background:rgba(255,152,0,0.15);color:#ff9800;">2.0 — Raw, known gaps</span>
+                <span style="background:rgba(255,77,77,0.15);color:#ff4d4d;">1.0 — Experimental pilot</span>
+            </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="section-header"><h3>Identification</h3></div>
+
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>Dataset title <span class="required">*</span></label>
+                    {{ form.title }}
+                    <span class="form-help">e.g. Kampala BRT Corridor — Bus Dwell-Time</span>
+                </div>
+                <div class="form-group full">
+                    <label>Abstract / description <span class="required">*</span></label>
+                    {{ form.description }}
+                    <span class="form-help">Provide a concise scope abstract for this dataset</span>
+                </div>
+                <div class="form-group">
+                    <label>Lead researcher <span class="required">*</span></label>
+                    <input type="text" class="form-control" readonly value="{{ user.get_full_name|default:user.username }}">
+                    <span class="form-help">Auto-filled from your account</span>
+                </div>
+                <div class="form-group">
+                    <label>Department <span class="required">*</span></label>
+                    {{ form.department }}
+                </div>
+                <div class="form-group">
+                    <label>Research domain <span class="required">*</span></label>
+                    {{ form.domain }}
+                </div>
+                <div class="form-group">
+                    <label>Sensor type <span class="required">*</span></label>
+                    {{ form.sensor_type }}
+                </div>
+                <div class="form-group full">
+                    <label>IUC project code <span class="required">*</span></label>
+                    {{ form.iuc_project_code }}
+                    <span class="form-help">e.g. IUC-Mobility</span>
+                </div>
+                <div class="form-group">
+                    <label>Output format</label>
+                    {{ form.output_format }}
+                </div>
+                <div class="form-group">
+                    <label>Download link / repository URL</label>
+                    {{ form.download_link }}
+                    <span class="form-help">https://…</span>
+                </div>
+            </div>
+
+            <div class="section-header"><h3>Deployment & coverage</h3></div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Location <span class="required">*</span></label>
+                    {{ form.location }}
+                    <span class="form-help">City, country</span>
+                </div>
+                <div class="form-group">
+                    <label>Update frequency <span class="required">*</span></label>
+                    {{ form.update_frequency }}
+                    <span class="form-help">e.g. 1 min, 30 s</span>
+                </div>
+                <div class="form-group">
+                    <label>Start date <span class="required">*</span></label>
+                    {{ form.start_date }}
+                </div>
+                <div class="form-group">
+                    <label>End date <span style="color:var(--text-secondary);font-weight:400;">(blank = ongoing)</span></label>
+                    {{ form.end_date }}
+                </div>
+            </div>
+
+            <div class="section-header"><h3>Units & quality</h3></div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Units of measurement <span class="required">*</span></label>
+                    {{ form.units_of_measurement }}
+                    <span class="form-help">e.g. µg/m³, °C, %RH</span>
+                </div>
+                <div class="form-group">
+                    <label>Data quality rating (0–5) <span class="required">*</span></label>
+                    {{ form.quality_score }}
+                </div>
+            </div>
+
+            <div class="section-header"><h3>Quality & access</h3></div>
+
+            <div class="form-grid single">
+                <div class="form-group">
+                    <label>License</label>
+                    {{ form.license }}
+                </div>
+            </div>
+
+            <div class="section-header"><h3>Stewardship</h3></div>
+
+            <div class="form-grid single">
+                <div class="form-group">
+                    <label>Data file upload</label>
+                    {{ form.data_file }}
+                    <span class="form-help">CSV, JSON, Parquet, or other supported formats</span>
+                </div>
+                <div class="form-group">
+                    <label>DOI / Identifier</label>
+                    {{ form.doi }}
+                    <span class="form-help">https://doi.org/… (optional)</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="reset" class="btn btn-ghost">Clear form</button>
+                <button type="submit" class="btn btn-primary" style="padding:12px 32px;">Submit for review</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

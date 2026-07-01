@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<script>window.location.href = '/';</script>
+{% else %}
+<div class="form-container glass-panel" style="max-width:400px; margin-top:60px;">
+    <h2 style="margin-bottom:24px; font-size:1.3rem; font-weight:700; text-align:center;">
+        Welcome back — <span style="color:var(--accent-purple);">ATLAS</span>
+    </h2>
+
+    {% if form.errors %}
+    <div class="messages error">
+        <p>Invalid credentials. Please try again.</p>
+    </div>
+    {% endif %}
+
+    <form method="POST" class="cyber-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            <div class="password-input-wrap">
+                {{ form.password }}
+                <button type="button" class="password-toggle" aria-label="Show password" data-target="{{ form.password.id_for_label }}">
+                    <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <svg class="eye-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                </button>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px;">
+            Sign In
+        </button>
+    </form>
+
+    <p style="text-align:center; margin-top:16px; font-size:0.85rem; color:var(--text-secondary);">
+        Demo admin: <strong style="color:var(--text-primary);">admin</strong> / <strong style="color:var(--text-primary);">admin123</strong>
+    </p>
+
+    <p style="text-align:center; margin-top:8px; font-size:0.85rem; color:var(--text-secondary);">
+        Don't have an account? <a href="{% url 'account_signup' %}" style="color:var(--accent-cyan);">Create one</a>
+    </p>
+
+    <div style="text-align:center; margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
+        <a href="{% url 'register_dataset' %}" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px; background:linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); border:none;">
+            Register a dataset
+        </a>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.password-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            if (!input) return;
+            const eye = this.querySelector('.eye-icon');
+            const eyeOff = this.querySelector('.eye-off-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (eye) eye.style.display = 'none';
+                if (eyeOff) eyeOff.style.display = 'block';
+                this.setAttribute('aria-label', 'Hide password');
+            } else {
+                input.type = 'password';
+                if (eye) eye.style.display = 'block';
+                if (eyeOff) eyeOff.style.display = 'none';
+                this.setAttribute('aria-label', 'Show password');
+            }
+        });
+    });
+</script>
+</div>
+{% endif %}
+{% endblock %}

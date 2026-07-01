@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:40px;">
+
+    <div style="margin-bottom:24px;">
+        <h1 style="font-size:1.5rem; font-weight:700; letter-spacing:0.01em;">Admin profile</h1>
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Update your username and change your password.</p>
+    </div>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if saved %}
+    <div class="messages">
+        <li class="success">Profile updated successfully.</li>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="messages">
+        <li class="error">{{ error }}</li>
+    </div>
+    {% endif %}
+
+    <div class="glass-panel form-container">
+        <form method="post" class="cyber-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.current_password.id_for_label }}">Current password</label>
+                {{ form.current_password }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.new_password.id_for_label }}">New password <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-muted);">(optional)</span></label>
+                {{ form.new_password }}
+            </div>
+            <button type="submit" class="submit-action-btn">Save changes</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

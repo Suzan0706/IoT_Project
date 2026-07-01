@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-top:8px; margin-bottom:16px;">
+    <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary);">PROJECT 5 ∙ INFORMATION SCIENCE ∙ IUC</p>
+</div>
+
+<div class="detail-layout">
+    <!-- Left Column -->
+    <div class="detail-main">
+        <span class="detail-domain">{{ dataset.domain.name|upper }}</span>
+        <h1 class="detail-title">{{ dataset.title }}</h1>
+        <p class="detail-description">{{ dataset.description }}</p>
+
+        <div style="margin-top:8px;">
+            <a href="{% url 'dataset_download' dataset.id %}" class="btn btn-primary">⛃ DOWNLOAD RAW STREAMING DATASET</a>
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <aside class="detail-sidebar">
+        <div class="sidebar-card glass-panel">
+            <h4>Technical Properties</h4>
+            <div class="sidebar-row">
+                <span class="label">DIGITAL OBJECT IDENTIFIER (DOI)</span>
+                <span class="value">{{ dataset.doi|default:"10.0000/aru-iot-atlas-id" }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">REGISTRATION TIMELINE</span>
+                <span class="value">{{ dataset.start_date|date:"Y-m-d" }} → {{ dataset.end_date|date:"Y-m-d" }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">SENSOR RECORDING SPEED</span>
+                <span class="value">{{ dataset.update_frequency }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">TOTAL ASSET DOWNLOADS</span>
+                <span class="value" style="color:var(--accent-cyan);">📥 {{ dataset.download_count }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">VALIDATION GRADE SCORE</span>
+                <span class="value">⭐ {{ dataset.quality_score }}</span>
+            </div>
+        </div>
+
+        <div class="sidebar-card glass-panel">
+            <h4>Researcher</h4>
+            <div class="sidebar-row">
+                <span class="value">{{ dataset.researcher.get_full_name|default:dataset.researcher.username }}</span>
+            </div>
+        </div>
+    </aside>
+</div>
+{% endblock %}

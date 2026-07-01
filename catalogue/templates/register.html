@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="border-b border-slate-800/80 px-6 pt-12 pb-16">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-[11px] font-mono text-slate-500 mb-4 tracking-wide">
+            Register a Dataset / Edition 01 · MMXXVI / Open Access / Project 5 · Information Science · IUC
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            Register a dataset
+        </h1>
+        <p class="text-slate-400 max-w-3xl mb-8 leading-relaxed">
+            Submit a new IoT sensor deployment to the catalogue. Provide metadata about the sensor, location, period, units and IUC project. Catalogue stewards will review and curate before publication.
+        </p>
+        <div class="flex items-center gap-4">
+            <a href="{% url 'home' %}" class="px-5 py-2.5 border border-slate-800/80 text-slate-400 hover:text-white text-sm font-medium rounded-lg transition-colors">Back to Atlas</a>
+        </div>
+    </div>
+</section>
+
+<!-- REGISTRATION FORM -->
+<section class="border-b border-slate-800/80 px-6 py-12">
+    <div class="max-w-7xl mx-auto">
+        <div class="max-w-3xl">
+            <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-6">
+                {% if messages %}
+                <ul class="messages mb-6">
+                    {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="bg-[#0b0d19] border border-slate-800/80 rounded-lg p-4 mb-6">
+                    <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Before you submit</h4>
+                    <ul class="text-xs text-slate-400 space-y-1">
+                        <li>Use a descriptive title — search depends on it.</li>
+                        <li>State units explicitly (µg/m³, °C, kWh).</li>
+                        <li>Open licenses (CC BY / CC0) maximise reuse.</li>
+                        <li>Active deployments can be registered now and updated later.</li>
+                    </ul>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">Identification</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="block text-xs text-slate-400 mb-2">Dataset title <span class="text-red-400">*</span></label>
+                                {{ form.title }}
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs text-slate-400 mb-2">Abstract / description <span class="text-red-400">*</span></label>
+                                {{ form.description }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Lead researcher <span class="text-red-400">*</span></label>
+                                <input type="text" class="w-full px-4 py-2.5 bg-[#0b0d19] border border-slate-800/80 rounded-lg text-sm text-white" readonly value="{{ user.get_full_name|default:user.username }}">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Department <span class="text-red-400">*</span></label>
+                                {{ form.department }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Research domain <span class="text-red-400">*</span></label>
+                                {{ form.domain }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Sensor type <span class="text-red-400">*</span></label>
+                                {{ form.sensor_type }}
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs text-slate-400 mb-2">IUC project code <span class="text-red-400">*</span></label>
+                                {{ form.iuc_project_code }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Output format</label>
+                                {{ form.output_format }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Download link / repository URL</label>
+                                {{ form.download_link }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">Deployment & coverage</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Location <span class="text-red-400">*</span></label>
+                                {{ form.location }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Update frequency <span class="text-red-400">*</span></label>
+                                {{ form.update_frequency }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Start date <span class="text-red-400">*</span></label>
+                                {{ form.start_date }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">End date <span class="text-slate-500 text-xs font-normal">(blank = ongoing)</span></label>
+                                {{ form.end_date }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">Units & quality</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Units of measurement <span class="text-red-400">*</span></label>
+                                {{ form.units_of_measurement }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Data quality rating (0–5) <span class="text-red-400">*</span></label>
+                                {{ form.quality_score }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">Quality & access</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">License</label>
+                                {{ form.license }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-4">Stewardship</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">Data file upload</label>
+                                {{ form.data_file }}
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-2">DOI / Identifier</label>
+                                {{ form.doi }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-4 pt-4 border-t border-slate-800">
+                        <button type="reset" class="px-5 py-2.5 border border-slate-800/80 text-slate-400 hover:text-white text-sm font-medium rounded-lg transition-colors">Clear form</button>
+                        <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-indigo-500/20">Submit for review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

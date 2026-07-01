@@ -1,0 +1,332 @@
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARU IoT Atlas — Research Dataset Catalogue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: '#0b0d19',
+                        cardDark: '#11142b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d19; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body class="bg-midnight text-white antialiased">
+
+    <!-- 1. Global Navigation Bar -->
+    <nav class="flex justify-between items-center h-16 px-6 mb-8 mx-auto max-w-7xl rounded-xl bg-cardDark border border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-indigo-600 rounded-md flex items-center justify-center text-white font-bold text-sm">A</div>
+            <div class="leading-none">
+                <div class="text-white font-semibold text-sm tracking-wide">ARU IoT Atlas</div>
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Research Dataset Catalogue</div>
+            </div>
+        </div>
+        <div class="hidden md:flex items-center gap-1">
+            <a href="/" class="px-3 py-1.5 text-sm text-white bg-slate-800 rounded-full border border-slate-700/50 shadow-lg shadow-indigo-500/10">Atlas</a>
+            <a href="{% url 'catalogue_search' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Catalogue</a>
+            <a href="{% url 'admin_analytics_dashboard' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Analytics</a>
+            <a href="{% url 'register_dataset' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Register</a>
+            <a href="{% url 'governance_policy' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Governance</a>
+        </div>
+        <span class="text-xs text-slate-400 font-mono bg-slate-950 px-3 py-1.5 rounded-full border border-slate-800 flex items-center gap-2">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            VLIR-UOS / IUC
+        </span>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 space-y-10">
+
+        <!-- 2. Main Hero Presentation Section -->
+        <section class="space-y-5">
+            <p class="text-xs text-slate-500 font-mono">Catalogue Live / Edition 01 · MMXXVI / {{ total_registered|stringformat:"04d" }} entries / Open Access / Project 5 · Information Science · IUC</p>
+            <h1 class="text-5xl font-extrabold text-white tracking-tight max-w-4xl leading-tight">The atlas of things that sense our cities.</h1>
+            <p class="text-slate-400 max-w-3xl leading-relaxed">A curated, Dublin Core–aligned catalogue of IoT sensor deployments across ARU's IUC research projects — transport, housing, heritage, energy, water and more — engineered to make research data findable, accessible, interoperable and reusable.</p>
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+                <a href="{% url 'catalogue_search' %}" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg transition-colors">Browse the catalogue</a>
+                <a href="{% url 'register_dataset' %}" class="inline-flex items-center px-5 py-2.5 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white text-sm font-medium rounded-lg transition-colors">Register a dataset</a>
+            </div>
+        </section>
+
+        <!-- 3. Vitals Grid & Automatic Sliding Text Ticker -->
+        <section class="space-y-4">
+            <div class="text-xs text-slate-500 font-mono uppercase tracking-widest">Catalogue vitals</div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5">
+                    <div class="text-3xl font-bold text-white">{{ total_registered }}</div>
+                    <div class="text-xs text-slate-500 mt-1">Datasets registered</div>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5">
+                    <div class="text-3xl font-bold text-white">{{ active_deployments }}</div>
+                    <div class="text-xs text-slate-500 mt-1">Active deployments</div>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5">
+                    <div class="text-3xl font-bold text-white">{{ total_downloads|default:"0"|intcomma }}</div>
+                    <div class="text-xs text-slate-500 mt-1">Sensor records archived</div>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5">
+                    <div class="text-3xl font-bold text-white">{{ mean_quality }}</div>
+                    <div class="text-xs text-slate-500 mt-1">Mean quality score (0–5)</div>
+                </div>
+            </div>
+            <div class="relative w-full overflow-hidden bg-cardDark py-3.5 border-y border-slate-800 flex">
+                <div class="flex space-x-12 animate-marquee whitespace-nowrap min-w-full justify-around pr-12 text-slate-400 font-mono text-xs tracking-wider">
+                    {% for d in domains %}
+                    <span>{{ d.name }}/{{ d.dataset_count|default:"0"|stringformat:"02d" }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Split Layout: Editor's Pick & Newly Registered -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {% with featured=datasets|first %}
+            {% if featured %}
+            <div class="rounded-xl bg-cardDark border border-slate-800 p-6 space-y-4">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Featured · Editor's pick / Dataset of the month</div>
+                <div class="flex items-center gap-2 text-[10px] text-indigo-300 font-mono uppercase tracking-wider">
+                    <span>{{ featured.domain.name }}</span> / <span>{{ featured.get_sensor_type_display }}</span> / <span>{{ featured.iuc_project_code }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-white leading-snug">{{ featured.title }}</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">{{ featured.description|truncatewords:35 }}</p>
+                <div class="text-xs text-slate-500 font-mono space-y-1">
+                    <p>Location: {{ featured.location }}</p>
+                    <p>Period: {{ featured.start_date|date:"Y-m-d" }} → {% if featured.end_date %}{{ featured.end_date|date:"Y-m-d" }}{% else %}ongoing{% endif %}</p>
+                    <p>Frequency: {{ featured.update_frequency }}</p>
+                    <p>Downloads: {{ featured.download_count }}</p>
+                </div>
+                <div class="flex items-center justify-between pt-2">
+                    <div class="text-xs text-slate-500">{{ featured.researcher.get_full_name|default:featured.researcher.username }} · {{ featured.department }}</div>
+                    <div class="flex items-center gap-3">
+                        <span class="px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{{ featured.quality_score|floatformat:1 }}</span>
+                        <a href="{% url 'dataset_detail' featured.id %}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition-colors">View record</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="rounded-xl bg-cardDark border border-slate-800 p-6 space-y-4">
+                <div class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Newly registered</div>
+                <ul class="space-y-3">
+                    {% for dataset in datasets|slice:":3" %}
+                    <li class="flex items-start justify-between p-3 rounded-lg bg-slate-950/40 border border-slate-800/60">
+                        <div>
+                            <div class="text-xs text-slate-500 font-mono">{{ forloop.counter|stringformat:"02d" }}</div>
+                            <div class="text-sm text-white font-medium mt-0.5">{{ dataset.domain.name }} / {{ dataset.start_date|date:"Y-m-d" }} — {{ dataset.title|truncatewords:8 }}</div>
+                            <div class="text-xs text-slate-500 mt-1">{{ dataset.location }}</div>
+                        </div>
+                        <span class="shrink-0 mt-1 px-2 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-300">{{ dataset.quality_score|floatformat:1 }} Score</span>
+                    </li>
+                    {% empty %}
+                    <li class="p-3 text-sm text-slate-500">No datasets yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+
+        <!-- 5. Research Domains Matrix -->
+        <section class="space-y-4">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Research domains</h2>
+                <p class="text-sm text-slate-500 mt-1">Eight domains. One shared infrastructure for sensing the urban condition...</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+                {% for d in domains %}
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-4 space-y-2">
+                    <div class="text-xs text-slate-500 font-mono">{{ forloop.counter|stringformat:"02d" }}</div>
+                    <div class="text-sm font-semibold text-white">{{ d.name }}</div>
+                    <div class="text-xs text-slate-500">{{ d.dataset_count|default:"0" }} datasets</div>
+                    <div class="text-xs text-slate-400 font-mono">
+                        {% with domain_dl=0 %}
+                        {% for ds in datasets %}
+                        {% if ds.domain.name == d.name %}
+                        {% with domain_dl=domain_dl|add:ds.download_count %}
+                        {% endwith %}
+                        {% endif %}
+                        {% endfor %}
+                        {% if domain_dl %}{{ domain_dl }} dl{% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- 6. Season's Leaderboard List -->
+        <section class="space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-[10px] text-indigo-300 font-mono uppercase tracking-widest">
+                Curated · Most cited this season / Datasets researchers are reaching for
+            </div>
+            <div class="rounded-xl bg-cardDark border border-slate-800 divide-y divide-slate-800">
+                {% for dataset in top_datasets|default:datasets|slice:"6" %}
+                <div class="flex items-center justify-between p-4">
+                    <div class="flex items-center gap-4">
+                        <span class="text-xs text-slate-500 font-mono w-4">{{ forloop.counter|stringformat:"02d" }}</span>
+                        <div>
+                            <div class="text-sm text-white font-medium">{{ dataset.domain.name }}: {{ dataset.title }}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs">
+                        <span class="text-slate-400 font-mono">{{ dataset.quality_score|floatformat:1 }} Rating</span>
+                        <span class="text-slate-500 font-mono">{{ dataset.download_count }} Downloads</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="px-5 py-4 text-sm text-slate-400">No datasets available yet.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- 7. Core FAIR Metadata Principles Section -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-bold text-white">Metadata principles / <span class="text-slate-400 font-normal">Built on FAIR from the first byte.</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-2">
+                    <div class="text-xs text-indigo-400 font-mono">01 / 04</div>
+                    <h4 class="text-white font-semibold">Findable</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Persistent identifiers, rich metadata, and indexed discovery layers ensure every dataset can be found by people and machines.</p>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-2">
+                    <div class="text-xs text-indigo-400 font-mono">02 / 04</div>
+                    <h4 class="text-white font-semibold">Accessible</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Standardised retrieval protocols, licences and provenance trails guarantee long-term access to both data and its metadata.</p>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-2">
+                    <div class="text-xs text-indigo-400 font-mono">03 / 04</div>
+                    <h4 class="text-white font-semibold">Interoperable</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Dublin Core–aligned schemas, formal shared vocabularies and linked data patterns connect datasets across domains.</p>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-2">
+                    <div class="text-xs text-indigo-400 font-mono">04 / 04</div>
+                    <h4 class="text-white font-semibold">Reusable</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Detailed provenance, clear licence terms and thorough quality documentation maximise the utility of archived sensor records.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Platform Stewardship Workflow Block -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-bold text-white">Workflow / <span class="text-slate-400 font-normal">From a sensor in the field to a citable record — in three steps.</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-3">
+                    <div class="text-xs text-indigo-400 font-mono">Step 01</div>
+                    <h4 class="text-white font-semibold">Describe the deployment</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Submit observation metadata through the standardised form aligned with Dublin Core and IUC data dictionaries.</p>
+                    <a href="{% url 'register_dataset' %}" class="inline-block text-xs text-indigo-300 hover:text-indigo-200 font-mono pt-2">Submit</a>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-3">
+                    <div class="text-xs text-indigo-400 font-mono">Step 02</div>
+                    <h4 class="text-white font-semibold">Validate & assign quality</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Stewards review completeness, calibrate against the quality rubric and assign a persistent DOI for the record.</p>
+                    <a href="{% url 'admin_analytics_dashboard' %}" class="inline-block text-xs text-indigo-300 hover:text-indigo-200 font-mono pt-2">Curate</a>
+                </div>
+                <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-3">
+                    <div class="text-xs text-indigo-400 font-mono">Step 03</div>
+                    <h4 class="text-white font-semibold">Publish & cite</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">The dataset appears in the public catalogue with citation-ready metadata and Open Access download endpoints.</p>
+                    <a href="{% url 'browse_catalogue' %}" class="inline-block text-xs text-indigo-300 hover:text-indigo-200 font-mono pt-2">Publish</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. Embedded Analytics Telemetry Callout Card -->
+        <section class="space-y-6">
+            <div class="rounded-xl bg-cardDark border border-slate-800 p-6 space-y-4">
+                <div class="text-[10px] text-emerald-400 font-mono uppercase tracking-widest">Live · Catalogue analytics / A telemetry board for our own research output.</div>
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                    <div class="flex gap-6 text-xs font-mono text-slate-300">
+                        <span>{{ total_registered }} Records</span>
+                        <span>{{ total_downloads|default:"0"|intcomma }} Downloads</span>
+                        <span>{{ domains_count }} Domains</span>
+                    </div>
+                    <a href="{% url 'admin_analytics_dashboard' %}" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors border border-slate-700/50">Open analytics dashboard</a>
+                </div>
+                <div class="border border-slate-800 rounded-lg p-4 bg-midnight">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs text-slate-500">Catalogue growth · last 12 mo</span>
+                        <span class="text-xs font-mono text-white">{{ total_registered }} | ▲ +{{ datasets_this_month }} this month</span>
+                    </div>
+                    <svg viewBox="0 0 400 100" class="w-full h-24">
+                        <polyline fill="none" stroke="#6366f1" stroke-width="2" points="0,80 50,65 100,70 150,45 200,50 250,30 300,35 350,15 400,20" />
+                        <line x1="0" y1="90" x2="400" y2="90" stroke="#334155" stroke-width="1" />
+                        <circle cx="0" cy="80" r="3" fill="#6366f1" />
+                        <circle cx="150" cy="45" r="3" fill="#6366f1" />
+                        <circle cx="300" cy="35" r="3" fill="#6366f1" />
+                        <text x="0" y="98" fill="#64748b" font-size="8" font-family="monospace">Aug</text>
+                        <text x="150" y="98" fill="#64748b" font-size="8" font-family="monospace">Nov</text>
+                        <text x="300" y="98" fill="#64748b" font-size="8" font-family="monospace">Feb</text>
+                        <text x="380" y="98" fill="#64748b" font-size="8" font-family="monospace" text-anchor="end">May</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-7xl mx-auto px-6 pt-8 pb-12 space-y-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="text-xs font-semibold text-white uppercase tracking-wider">Brand Parameters</div>
+                <ul class="space-y-2 text-xs text-slate-500">
+                    <li><a href="#" class="hover:text-indigo-300 transition-colors">ARU IoT Atlas</a></li>
+                    <li><a href="#" class="hover:text-indigo-300 transition-colors">Vision & Mission</a></li>
+                    <li><a href="#" class="hover:text-indigo-300 transition-colors">IUC Partnership</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <div class="text-xs font-semibold text-white uppercase tracking-wider">Portal Routes</div>
+                <ul class="space-y-2 text-xs text-slate-500">
+                    <li><a href="{% url 'catalogue_search' %}" class="hover:text-indigo-300 transition-colors">Catalogue</a></li>
+                    <li><a href="{% url 'admin_analytics_dashboard' %}" class="hover:text-indigo-300 transition-colors">Analytics</a></li>
+                    <li><a href="{% url 'governance_policy' %}" class="hover:text-indigo-300 transition-colors">Governance</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <div class="text-xs font-semibold text-white uppercase tracking-wider">Standards Files</div>
+                <ul class="space-y-2 text-xs text-slate-500">
+                    <li><a href="#" class="hover:text-indigo-300 transition-colors">Metadata Standard</a></li>
+                    <li><a href="#" class="hover:text-indigo-300 transition-colors">Dublin Core Mappings</a></li>
+                    <li><a href="#" class="hover:text-indigo-300 transition-colors">API Reference</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <div class="text-xs font-semibold text-white uppercase tracking-wider">Stewardship Credits</div>
+                <ul class="space-y-2 text-xs text-slate-500">
+                    <li>VLIR-UOS / IUC</li>
+                    <li>ARU Research Office</li>
+                    <li>Dataset contributors</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-slate-600 font-mono">
+            <div>© 2026 ARU IoT Atlas. All rights reserved.</div>
+            <div>v0.2.0 • midnight-indigo</div>
+        </div>
+    </footer>
+
+</body>
+</html>

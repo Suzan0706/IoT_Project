@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="main-governance-layout" style="margin-top:24px; display:flex; flex-direction:column; gap:24px;">
+
+    <div class="governance-vitals-row" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
+        <div class="glass-panel vital-metric-box" style="padding:24px;">
+            <h4 style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); margin-bottom:8px;">PENDING EVALUATIONS</h4>
+            <h2 style="font-size:2rem; font-weight:700; color:var(--accent-gold);">{{ pending_count }}</h2>
+        </div>
+        <div class="glass-panel vital-metric-box" style="padding:24px;">
+            <h4 style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); margin-bottom:8px;">LIVE PUBLISHED ASSETS</h4>
+            <h2 style="font-size:2rem; font-weight:700; color:var(--accent-mint);">{{ live_count }}</h2>
+        </div>
+    </div>
+
+    <div class="glass-panel database-log-wrapper" style="overflow:hidden;">
+        <div class="panel-title-bar" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border-glass);">
+            <h3 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">PLATFORM TRANSACTION AUDIT TRAILS</h3>
+            <span class="active-pulse-tag" style="font-size:0.75rem; font-weight:600; color:var(--accent-mint); letter-spacing:0.04em;">● INSTANCE SYNCED</span>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>TIMESTAMP</th>
+                        <th>OPERATOR</th>
+                        <th>EVENT IDENTIFIER</th>
+                        <th>IP LOCATION TARGET</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in system_logs %}
+                    <tr class="log-row {% if log.action_type == 'error' %}alert-state-red{% endif %}">
+                        <td class="mono-text">{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+                        <td>{{ log.user.username|upper|default:"SYSTEM ANONYMOUS" }}</td>
+                        <td>
+                            {% if log.action_type == 'download' %}
+                            <span class="pill-tag tag-download">FILE DOWNLOADED</span>
+                            {% elif log.action_type == 'status_change' %}
+                            <span class="pill-tag tag-status_change">STATUS MODIFIED</span>
+                            {% elif log.action_type == 'auth_event' %}
+                            <span class="pill-tag tag-auth_event">AUTHENTICATION CHANGE</span>
+                            {% elif log.action_type == 'error' %}
+                            <span class="pill-tag tag-error alert-state-red">SYSTEM ALERT</span>
+                            {% else %}
+                            <span class="pill-tag tag-{{ log.action_type }}">{{ log.get_action_type_display|upper }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="mono-text steel-gray-text">{{ log.ip_address|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align:center; padding:24px; color:var(--text-muted);">No system transactional entries captured in this cluster slice.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

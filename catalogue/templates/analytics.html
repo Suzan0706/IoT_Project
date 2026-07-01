@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard — ARU IoT Atlas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: { 950: '#0b0d19', 900: '#11142b', 800: '#1a1e3a', 700: '#252a4a' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .bg-card-dark { background-color: #11142b; border: 1px solid #1e293b; }
+        .chart-fallback { display: flex; align-items: center; justify-content: center; height: 100%; color: #64748b; font-size: 12px; }
+    </style>
+</head>
+<body class="bg-[#0b0d19] text-slate-300 font-sans antialiased min-h-screen">
+
+    <div class="max-w-[1400px] mx-auto px-6 py-8">
+
+        <!-- Header -->
+        <div class="flex justify-between items-center h-16 px-6 mb-8 rounded-xl bg-card-dark">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-indigo-600 rounded-md flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-500/20">A</div>
+                <div>
+                    <div class="text-white font-semibold text-sm tracking-wide">ARU IoT Atlas</div>
+                    <div class="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Research Dataset Catalogue</div>
+                </div>
+            </div>
+            <nav class="flex items-center gap-1">
+                <a href="{% url 'home' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Atlas</a>
+                <a href="{% url 'browse_catalogue' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Catalogue</a>
+                <a href="{% url 'admin_analytics_dashboard' %}" class="px-4 py-2 bg-slate-800 rounded-lg text-white text-sm font-medium shadow-lg shadow-indigo-500/10 border border-slate-700/50">Analytics</a>
+                <a href="{% url 'register_dataset' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Register</a>
+                <a href="{% url 'governance_policy' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Governance</a>
+                <a href="{% url 'register_dataset' %}" class="ml-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-indigo-500/20">+ Register dataset</a>
+                <a href="{% url 'account_logout' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Sign Out</a>
+            </nav>
+            <div class="flex items-center">
+                <span class="text-xs text-slate-400 font-mono bg-slate-950 px-3 py-1.5 rounded-full border border-slate-800 flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    VLIR-UOS / IUC
+                </span>
+            </div>
+        </div>
+
+        <!-- Dashboard Heading -->
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <span class="text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-2 block">Catalogue analytics</span>
+                <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-2">How the IoT Atlas is growing</h1>
+                <p class="text-slate-400 text-sm max-w-2xl">Live overview of catalogue activity — used by the VLIR-UOS reporting team and ICT &amp; SSIC stewardship to monitor open-data uptake across IUC project domains.</p>
+            </div>
+            <a href="{% url 'browse_catalogue' %}" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors shrink-0 ml-4">Back to catalogue →</a>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="p-6 rounded-xl bg-card-dark relative overflow-hidden shadow-lg shadow-indigo-900/10">
+                <div class="absolute top-4 right-4 w-8 h-8 rounded-md bg-slate-800/60 flex items-center justify-center text-slate-400">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                </div>
+                <p class="text-slate-400 text-sm font-medium mb-1">Registered datasets</p>
+                <p class="text-4xl font-bold text-white">12</p>
+                <p class="text-emerald-400 text-xs font-medium mt-2 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                    +0 this month
+                </p>
+            </div>
+            <div class="p-6 rounded-xl bg-card-dark relative overflow-hidden shadow-lg shadow-indigo-900/10">
+                <div class="absolute top-4 right-4 w-8 h-8 rounded-md bg-slate-800/60 flex items-center justify-center text-slate-400">
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i>
+                </div>
+                <p class="text-slate-400 text-sm font-medium mb-1">Total downloads</p>
+                <p class="text-4xl font-bold text-white">2,141</p>
+                <p class="text-slate-400 text-xs font-medium mt-2">all-time</p>
+            </div>
+            <div class="p-6 rounded-xl bg-card-dark relative overflow-hidden shadow-lg shadow-indigo-900/10">
+                <div class="absolute top-4 right-4 w-8 h-8 rounded-md bg-slate-800/60 flex items-center justify-center text-slate-400">
+                    <i data-lucide="star" class="w-4 h-4"></i>
+                </div>
+                <p class="text-slate-400 text-sm font-medium mb-1">Mean quality score</p>
+                <p class="text-4xl font-bold text-white">4.06 / 5</p>
+                <p class="text-slate-400 text-xs font-medium mt-2">across all entries</p>
+            </div>
+            <div class="p-6 rounded-xl bg-card-dark relative overflow-hidden shadow-lg shadow-indigo-900/10">
+                <div class="absolute top-4 right-4 w-8 h-8 rounded-md bg-slate-800/60 flex items-center justify-center text-slate-400">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+                </div>
+                <p class="text-slate-400 text-sm font-medium mb-1">Domains covered</p>
+                <p class="text-4xl font-bold text-white">8</p>
+                <p class="text-slate-400 text-xs font-medium mt-2">8 active</p>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+            <div class="lg:col-span-8 rounded-xl bg-card-dark p-6 shadow-lg shadow-indigo-900/10">
+                <h3 class="text-white text-lg font-semibold mb-1">Catalogue growth</h3>
+                <p class="text-slate-400 text-sm mb-4">Cumulative dataset registrations over the past 12 months</p>
+                <div class="w-full h-[320px]">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
+            <div class="lg:col-span-4 rounded-xl bg-card-dark p-6 shadow-lg shadow-indigo-900/10">
+                <h3 class="text-white text-lg font-semibold mb-1">Quality distribution</h3>
+                <p class="text-slate-400 text-sm mb-4">Data quality score buckets</p>
+                <div class="w-full h-[320px]">
+                    <canvas id="qualityChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+            <div class="lg:col-span-4 rounded-xl bg-card-dark p-6 shadow-lg shadow-indigo-900/10">
+                <h3 class="text-white text-lg font-semibold mb-1">Datasets by domain</h3>
+                <p class="text-slate-400 text-sm mb-4">Coverage across IUC research themes</p>
+                <div class="flex flex-col items-center">
+                    <div class="w-full max-w-[320px] h-[260px]">
+                        <canvas id="domainDonut"></canvas>
+                    </div>
+                    <div id="domainLegend" class="grid grid-cols-2 gap-x-4 gap-y-2 mt-4 w-full max-w-[320px]"></div>
+                </div>
+            </div>
+            <div class="lg:col-span-8 rounded-xl bg-card-dark p-6 shadow-lg shadow-indigo-900/10">
+                <h3 class="text-white text-lg font-semibold mb-1">Downloads by domain</h3>
+                <p class="text-slate-400 text-sm mb-4">All-time reuse activity</p>
+                <div class="w-full h-[260px]">
+                    <canvas id="downloadsBar"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datasets Table -->
+        <div class="rounded-xl bg-card-dark shadow-lg shadow-indigo-900/10 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-800/60">
+                <h3 class="text-white text-lg font-semibold">Most downloaded datasets</h3>
+                <p class="text-slate-400 text-sm mt-1">Top reuse in the current cycle</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="text-slate-500 text-xs tracking-wider uppercase border-b border-slate-800/60">
+                            <th class="px-6 py-3 font-medium">Dataset</th>
+                            <th class="px-6 py-3 font-medium text-right">Domain</th>
+                            <th class="px-6 py-3 font-medium text-right">Quality</th>
+                            <th class="px-6 py-3 font-medium text-right">Downloads</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b border-slate-800/40 hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-4 text-white font-medium">Roadside PM2.5 Network — Dar es Salaam</td>
+                            <td class="px-6 py-4 text-slate-400 text-right">Air Quality</td>
+                            <td class="px-6 py-4 text-right"><span class="text-amber-400 tracking-widest">★★★★</span> <span class="text-amber-400">3.6</span></td>
+                            <td class="px-6 py-4 text-white text-right font-mono">405</td>
+                        </tr>
+                        <tr class="border-b border-slate-800/40 hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-4 text-white font-medium">Kampala BRT Corridor — Bus Dwell-Time & Passenger Load</td>
+                            <td class="px-6 py-4 text-slate-400 text-right">Transport</td>
+                            <td class="px-6 py-4 text-right"><span class="text-amber-400 tracking-widest">★★★★★</span> <span class="text-amber-400">4.6</span></td>
+                            <td class="px-6 py-4 text-white text-right font-mono">312</td>
+                        </tr>
+                        <tr class="border-b border-slate-800/40 hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-4 text-white font-medium">Clinic Cold-Chain Temperature Logs</td>
+                            <td class="px-6 py-4 text-slate-400 text-right">Health</td>
+                            <td class="px-6 py-4 text-right"><span class="text-amber-400 tracking-widest">★★★★★</span> <span class="text-amber-400">4.7</span></td>
+                            <td class="px-6 py-4 text-white text-right font-mono">268</td>
+                        </tr>
+                        <tr class="border-b border-slate-800/40 hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-4 text-white font-medium">Lake Victoria Nearshore Water Quality Buoys</td>
+                            <td class="px-6 py-4 text-slate-400 text-right">Water</td>
+                            <td class="px-6 py-4 text-right"><span class="text-amber-400 tracking-widest">★★★★</span> <span class="text-amber-400">4.4</span></td>
+                            <td class="px-6 py-4 text-white text-right font-mono">221</td>
+                        </tr>
+                        <tr class="border-b border-slate-800/40 hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-4 text-white font-medium">Social Housing Indoor Air Quality — Mwanza</td>
+                            <td class="px-6 py-4 text-slate-400 text-right">Housing</td>
+                            <td class="px-6 py-4 text-right"><span class="text-amber-400 tracking-widest">★★★★</span> <span class="text-amber-400">4.2</span></td>
+                            <td class="px-6 py-4 text-white text-right font-mono">198</td>
+                        </tr>
+                        <tr class="border-b border-slate-800/40 hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-4 text-white font-medium">Matatu Fleet Vibration & Route Roughness</td>
+                            <td class="px-6 py-4 text-slate-400 text-right">Transport</td>
+                            <td class="px-6 py-4 text-right"><span class="text-amber-400 tracking-widest">★★★</span> <span class="text-amber-400">3.8</span></td>
+                            <td class="px-6 py-4 text-white text-right font-mono">189</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            const gridColor = 'rgba(148, 163, 184, 0.12)';
+            const gridDash = [4, 4];
+            const tickColor = '#64748b';
+
+            function initCharts() {
+                if (typeof Chart === 'undefined') {
+                    console.warn('Chart.js not loaded');
+                    return;
+                }
+
+                Chart.defaults.color = tickColor;
+                Chart.defaults.borderColor = gridColor;
+
+                // --- CATALOGUE GROWTH CHART ---
+                const growthCanvas = document.getElementById('growthChart');
+                if (growthCanvas) {
+                    try {
+                        const ctx = growthCanvas.getContext('2d');
+                        const gradientGrowth = ctx.createLinearGradient(0, 0, 0, 400);
+                        gradientGrowth.addColorStop(0, 'rgba(99, 102, 241, 0.1)');
+                        gradientGrowth.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+                        const mayAnchorPlugin = {
+                            id: 'mayAnchor',
+                            afterDatasetsDraw(chart) {
+                                try {
+                                    const meta = chart.getDatasetMeta(0);
+                                    if (!meta.data || meta.data.length <= 10) return;
+                                    const point = meta.data[10];
+                                    const c = chart.ctx;
+                                    c.save();
+                                    const x = point.x;
+                                    const y = point.y;
+                                    const boxWidth = 88;
+                                    const boxHeight = 38;
+                                    const boxX = x - boxWidth / 2;
+                                    const boxY = y - boxHeight - 14;
+
+                                    c.fillStyle = '#0f172a';
+                                    c.strokeStyle = '#1e293b';
+                                    c.lineWidth = 1;
+                                    c.beginPath();
+                                    c.roundRect(boxX, boxY, boxWidth, boxHeight, 8);
+                                    c.fill();
+                                    c.stroke();
+
+                                    c.fillStyle = '#ffffff';
+                                    c.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                                    c.textAlign = 'center';
+                                    c.textBaseline = 'middle';
+                                    c.fillText('May', x, boxY + 14);
+                                    c.font = '10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                                    c.fillStyle = '#94a3b8';
+                                    c.fillText('Total datasets : 12', x, boxY + 30);
+
+                                    c.beginPath();
+                                    c.moveTo(x - 6, boxY + boxHeight);
+                                    c.lineTo(x + 6, boxY + boxHeight);
+                                    c.lineTo(x, y - 2);
+                                    c.closePath();
+                                    c.fillStyle = '#0f172a';
+                                    c.fill();
+                                    c.strokeStyle = '#1e293b';
+                                    c.stroke();
+                                    c.restore();
+                                } catch(e) {}
+                            }
+                        };
+
+                        new Chart(ctx, {
+                            type: 'line',
+                            plugins: [mayAnchorPlugin],
+                            data: {
+                                labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                                datasets: [{
+                                    label: 'Total datasets',
+                                    data: [6, 6, 7, 8, 9, 12, 12, 12, 12, 12, 12, 12],
+                                    borderColor: '#6366f1',
+                                    borderWidth: 2,
+                                    tension: 0.35,
+                                    fill: true,
+                                    backgroundColor: gradientGrowth,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 6,
+                                    pointHoverBackgroundColor: '#ffffff',
+                                    pointHoverBorderColor: '#6366f1',
+                                    pointHoverBorderWidth: 3
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: { mode: 'index', intersect: false },
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        enabled: true,
+                                        backgroundColor: '#0f172a',
+                                        titleColor: '#ffffff',
+                                        bodyColor: '#6366f1',
+                                        borderColor: '#1e293b',
+                                        borderWidth: 1,
+                                        padding: 12,
+                                        cornerRadius: 8,
+                                        displayColors: false,
+                                        callbacks: {
+                                            title: (context) => context[0].label,
+                                            label: (context) => `Total datasets : ${context.raw}`
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: { grid: { color: gridColor, borderDash: gridDash }, ticks: { color: tickColor } },
+                                    y: { min: 0, max: 15, ticks: { stepSize: 5, color: tickColor }, grid: { color: gridColor, borderDash: gridDash } }
+                                }
+                            }
+                        });
+                    } catch(e) {
+                        console.warn('growthChart init failed:', e);
+                    }
+                }
+
+                // --- QUALITY DISTRIBUTION CHART ---
+                const qualityCanvas = document.getElementById('qualityChart');
+                if (qualityCanvas) {
+                    try {
+                        const ctx = qualityCanvas.getContext('2d');
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['★★★★★ 4.5+', '★★★★ 4.0–4.5', '★★★ 3.5–4.0', '★★ 3.0–3.5', '★ <3.0'],
+                                datasets: [{
+                                    label: 'Datasets',
+                                    data: [3, 4, 3, 2, 0],
+                                    backgroundColor: [
+                                        'rgba(167, 139, 250, 0.85)',
+                                        'rgba(99, 102, 241, 0.85)',
+                                        'rgba(129, 140, 248, 0.85)',
+                                        '#34d399',
+                                        'rgba(148, 163, 184, 0.0)',
+                                    ],
+                                    borderWidth: 0,
+                                    borderRadius: 6,
+                                    barPercentage: 0.6
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y',
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    x: {
+                                        min: 0,
+                                        max: 4,
+                                        ticks: { stepSize: 1, color: tickColor, font: { size: 11 } },
+                                        grid: { color: gridColor, borderDash: gridDash }
+                                    },
+                                    y: {
+                                        grid: { display: false },
+                                        ticks: { color: tickColor, font: { size: 12 } }
+                                    }
+                                }
+                            }
+                        });
+                    } catch(e) {
+                        console.warn('qualityChart init failed:', e);
+                    }
+                }
+
+                // --- DOMAIN DONUT CHART ---
+                const domainCanvas = document.getElementById('domainDonut');
+                if (domainCanvas) {
+                    try {
+                        const domainColors = ['#4F46E5', '#6366F1', '#A78BFA', '#10B981', '#F59E0B', '#14B8A6', '#84CC16', '#D946EF'];
+                        const domainLabels = ['Transport', 'Housing', 'Heritage', 'Energy', 'Water', 'Air Quality', 'Agriculture', 'Health'];
+                        const domainData = [4, 3, 2, 3, 2, 1, 2, 1];
+                        const totalDatasets = domainData.reduce((a, b) => a + b, 0);
+
+                        const ctx = domainCanvas.getContext('2d');
+                        new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: domainLabels,
+                                datasets: [{
+                                    data: domainData,
+                                    backgroundColor: domainColors,
+                                    borderColor: '#11142b',
+                                    borderWidth: 3,
+                                    hoverBorderColor: '#ffffff',
+                                    hoverBorderWidth: 2,
+                                    hoverOffset: 12
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                cutout: '65%',
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: '#161a36',
+                                        titleColor: '#ffffff',
+                                        bodyColor: '#ffffff',
+                                        borderColor: '#334155',
+                                        borderWidth: 1,
+                                        padding: 14,
+                                        cornerRadius: 12,
+                                        callbacks: {
+                                            label: function(context) {
+                                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                                const value = context.raw;
+                                                const pct = Math.round((value / total) * 100);
+                                                return ` ${value} datasets (${pct}%)`;
+                                            }
+                                        }
+                                    }
+                                },
+                                animation: {
+                                    animateScale: true,
+                                    animateRotate: true,
+                                    duration: 1200,
+                                    easing: 'easeInOutQuart'
+                                }
+                            },
+                            plugins: [{
+                                id: 'donutCenterText',
+                                beforeDraw(chart) {
+                                    const { width, height, ctx: c } = chart;
+                                    c.save();
+                                    const centerX = width / 2;
+                                    const centerY = height / 2;
+                                    c.textAlign = 'center';
+                                    c.textBaseline = 'middle';
+                                    c.font = 'bold 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                                    c.fillStyle = '#ffffff';
+                                    c.fillText(totalDatasets, centerX, centerY - 8);
+                                    c.font = '500 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                                    c.fillStyle = '#64748b';
+                                    c.fillText('datasets', centerX, centerY + 16);
+                                    c.restore();
+                                }
+                            }]
+                        });
+                    } catch(e) {
+                        console.warn('domainDonut init failed:', e);
+                    }
+                }
+
+                const legendContainer = document.getElementById('domainLegend');
+                if (legendContainer) {
+                    const domainColors = ['#4F46E5', '#6366F1', '#A78BFA', '#10B981', '#F59E0B', '#14B8A6', '#84CC16', '#D946EF'];
+                    const domainLabels = ['Transport', 'Housing', 'Heritage', 'Energy', 'Water', 'Air Quality', 'Agriculture', 'Health'];
+                    domainLabels.forEach((label, i) => {
+                        const item = document.createElement('div');
+                        item.style.cssText = 'display:flex; align-items:center; gap:6px; font-size:12px; color:#64748b; cursor:pointer; transition:color 0.2s;';
+                        item.innerHTML = `<span style="width:10px; height:10px; border-radius:50%; background:${domainColors[i]}; display:inline-block; flex-shrink:0;"></span>${label}`;
+                        item.addEventListener('mouseenter', () => { item.style.color = '#ffffff'; });
+                        item.addEventListener('mouseleave', () => { item.style.color = '#64748b'; });
+                        legendContainer.appendChild(item);
+                    });
+                }
+
+                // --- DOWNLOADS BAR CHART ---
+                const downloadsCanvas = document.getElementById('downloadsBar');
+                if (downloadsCanvas) {
+                    try {
+                        const domainColors = ['#4F46E5', '#6366F1', '#A78BFA', '#10B981', '#F59E0B', '#14B8A6', '#84CC16', '#D946EF'];
+                        const ctx = downloadsCanvas.getContext('2d');
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Transport', 'Housing', 'Heritage', 'Energy', 'Water', 'Air Quality', 'Agriculture', 'Health'],
+                                datasets: [{
+                                    label: 'Downloads',
+                                    data: [450, 320, 180, 290, 210, 120, 190, 95],
+                                    backgroundColor: domainColors.map(c => c + 'DD'),
+                                    hoverBackgroundColor: domainColors,
+                                    borderWidth: 0,
+                                    borderRadius: 6,
+                                    barPercentage: 0.65
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false } },
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 600,
+                                        ticks: {
+                                            stepSize: 150,
+                                            color: '#64748b',
+                                            font: { size: 11 }
+                                        },
+                                        grid: {
+                                            color: 'rgba(148, 163, 184, 0.08)',
+                                            borderDash: [4, 4]
+                                        },
+                                        border: { display: false }
+                                    },
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: {
+                                            color: '#64748b',
+                                            font: { size: 11, weight: '500' }
+                                        },
+                                        border: { display: false }
+                                    }
+                                }
+                            }
+                        });
+                    } catch(e) {
+                        console.warn('downloadsBar init failed:', e);
+                    }
+                }
+
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                    lucide.createIcons();
+                }
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCharts);
+            } else {
+                initCharts();
+            }
+        })();
+    </script>
+</body>
+</html>

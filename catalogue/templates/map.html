@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% load map_extras %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:24px;">
+    <h2 style="font-size:1.3rem; font-weight:700;">Geospatial Deployment Overview</h2>
+    <p class="text-muted" style="font-size:0.9rem; margin-top:4px;">Active sensor array locations across research domains</p>
+</div>
+
+<div class="map-layout">
+    <div class="map-container glass-panel" id="map-wrapper">
+        <div id="map" style="width:100%; height:100%;"></div>
+        <div class="map-overlay" id="geo-loader">
+            <div class="geo-spinner"></div>
+            <span>Resolving deployment coordinates…</span>
+        </div>
+    </div>
+    <aside class="map-sidebar glass-panel">
+        <h3 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">Active Nodes</h3>
+        <div id="sidebar-list">
+            {% for dataset in datasets %}
+            <div class="map-node-item" data-location="{{ dataset.location|lower }}" data-domain="{{ dataset.domain.name|lower }}">
+                <div class="node-dot" style="background: {{ dataset.domain.name|domain_color }};"></div>
+                <div class="node-info">
+                    <strong style="font-size:0.85rem; color:var(--text-primary);">{{ dataset.title }}</strong>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">📍 {{ dataset.location }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <p style="font-size:0.85rem; color:var(--text-muted);">No active deployments found.</p>
+            {% endfor %}
+        </div>
+    </aside>
+</div>
+
+<div class="dataset-grid" style="margin-top:24px;">
+    {% for dataset in datasets %}
+    <article class="dataset-card glass-panel">
+        <div class="card-top">
+            <span class="card-index">{{ forloop.counter|stringformat:"02d" }}</span>
+            <span class="card-domain">{{ dataset.domain.name|upper }}</span>
+            <span class="card-status"><span class="status-dot"></span> LIVE</span>
+        </div>
+        <h3 class="card-title">{{ dataset.title }}</h3>
+        <p class="card-desc">{{ dataset.description|truncatewords:20 }}</p>
+        <div class="card-footer">
+            <span>📍 <span class="val">{{ dataset.location }}</span></span>
+            <span>⭐ <span class="val">{{ dataset.quality_score }}</span></span>
+            <span>📥 <span class="val">{{ dataset.download_count }}</span></span>
+        </div>
+    </article>
+    {% empty %}
+    <div class="no-results">No live datasets available.</div>
+    {% endfor %}
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const mapData = {{ datasets_json|safe }};
+    const domainColors = {
+        'transport': '#4D77FF',
+        'housing': '#8A2BE2',
+        'heritage': '#B4A0FF',
+        'energy': '#00ff9d',
+        'water': '#ffc107',
+        'air quality': '#00BCD4',
+        'agriculture': '#96A028',
+        'health': '#E91E63',
+    };
+
+    function getDomainColor(name) {
+        return domainColors[name.toLowerCase()] || '#4D77FF';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const map = L.map('map', {
+            center: [0, 20],
+            zoom: 2,
+            attributionControl: false,
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: 'abcd',
+            maxZoom: 19,
+        }).addTo(map);
+
+        L.control.attribution({position: 'bottomright'}).addTo(map);
+
+        const loader = document.getElementById('geo-loader');
+        const resolved = [];
+        let pending = mapData.length;
+
+        if (pending === 0) {
+            if (loader) loader.style.display = 'none';
+            return;
+        }
+
+        mapData.forEach((item, i) => {
+            const q = encodeURIComponent(item.location);
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${q}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.length) {
+                        resolved.push({
+                            lat: parseFloat(data[0].lat),
+                            lon: parseFloat(data[0].lon),
+                            item
+                        });
+                    } else {
+                        resolved.push({
+                            lat: (Math.random() * 160 - 80),
+                            lon: (Math.random() * 340 - 170),
+                            item
+                        });
+                    }
+                    pending--;
+                    if (pending === 0) {
+                        if (loader) loader.style.display = 'none';
+                        drawNodes(resolved);
+                    }
+                })
+                .catch(() => {
+                    resolved.push({
+                        lat: (Math.random() * 160 - 80),
+                        lon: (Math.random() * 340 - 170),
+                        item
+                    });
+                    pending--;
+                    if (pending === 0) {
+                        if (loader) loader.style.display = 'none';
+                        drawNodes(resolved);
+                    }
+                });
+        });
+
+        function drawNodes(nodes) {
+            const group = new L.featureGroup(nodes.map(n => {
+                const color = getDomainColor(n.item.domain);
+                const marker = L.circleMarker([n.lat, n.lon], {
+                    radius: 8,
+                    fillColor: color,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.85,
+                }).bindPopup(`
+                    <div style="font-family:sans-serif; min-width:180px;">
+                        <strong style="font-size:13px; color:#111;">${n.item.title}</strong><br>
+                        <span style="font-size:11px; color:#555;">${n.item.domain}</span><br>
+                        <span style="font-size:11px; color:#555;">📍 ${n.item.location}</span><br>
+                        <span style="font-size:11px; color:#555;">⭐ ${n.item.quality_score} / 5</span>
+                    </div>
+                `);
+                return marker;
+            })).addTo(map);
+
+            map.fitBounds(group.getBounds().pad(0.15));
+        }
+
+        const listItems = document.querySelectorAll('.map-node-item');
+        listItems.forEach(el => {
+            el.addEventListener('click', () => {
+                const loc = el.getAttribute('data-location');
+                const domain = el.getAttribute('data-domain');
+                const q = encodeURIComponent(loc);
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${q}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && data.length) {
+                            const lat = parseFloat(data[0].lat);
+                            const lon = parseFloat(data[0].lon);
+                            map.setView([lat, lon], 10);
+                        }
+                    });
+            });
+            el.style.cursor = 'pointer';
+        });
+    });
+</script>
+{% endblock %}
