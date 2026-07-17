@@ -1,10 +1,13 @@
-{% load static socialaccount %}
+{% load static socialaccount i18n humanize %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ current_theme }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IoT Research Dataset Catalogue — ARU</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>{% trans "IoT Research Dataset Catalogue ARU" %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -33,36 +36,69 @@
             }
         }
     </script>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20250720">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=20250720">
+    {% block extra_head %}{% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error || e.message);
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+        });
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js').catch(function(err) {
+            console.warn('ServiceWorker registration failed:', err);
+          });
+        }
+        window.addEventListener('beforeunload', function() {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              registrations.forEach(function(registration) {
+                registration.unregister();
+              });
+            });
+          }
+        });
+        window.addEventListener('keydown', function(e) {
+          if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+            e.preventDefault();
+            if ('caches' in window) {
+              caches.keys().then(function(names) {
+                names.forEach(function(name) {
+                  caches.delete(name);
+                });
+              });
+            }
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations.forEach(function(registration) {
+                  registration.unregister();
+                });
+              });
+            }
+            window.location.reload(true);
+          }
+        });
+    </script>
 </head>
 <body class="bg-midnight-950 text-slate-300 font-sans antialiased">
 
     <nav class="flex justify-between items-center h-16 px-6 bg-midnight-950/80 backdrop-blur-md border-b border-slate-800/80 sticky top-0 z-50">
         <div class="flex items-center gap-3">
+            <button id="hamburger-btn" aria-label="Toggle Navigation" class="hamburger-btn">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
             <div class="w-8 h-8 bg-indigo-600 rounded-md flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-500/20">A</div>
             <div>
-                <div class="text-white font-semibold text-sm tracking-wide">ARU IoT Atlas</div>
+                <div class="text-white font-semibold text-sm tracking-wide">ARU IoT Dataset Catalogue</div>
                 <div class="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Research Dataset Catalogue</div>
             </div>
         </div>
-        <div class="flex items-center gap-1">
-            <span class="px-3 py-1.5 text-sm text-white font-semibold rounded-full border border-indigo-500/60 bg-indigo-500/10">Atlas</span>
-            <a href="{% url 'browse_catalogue' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Catalogue</a>
-            <a href="{% url 'admin_analytics_dashboard' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Analytics</a>
-            <a href="{% url 'register_dataset' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Register</a>
-            <a href="{% url 'governance_policy' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Governance</a>
-            {% if user.is_authenticated %}
-                {% if user.is_staff %}
-                <a href="{% url 'admin_profile' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Admin profile</a>
-                {% endif %}
-                <a href="{% url 'account_logout' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Sign Out</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Sign In</a>
-                <a href="{% url 'account_signup' %}" class="ml-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-indigo-500/20">Sign Up</a>
-            {% endif %}
-        </div>
-        <div class="flex items-center">
+        <div class="flex items-center gap-3">
             <span class="text-xs text-slate-400 font-mono bg-slate-950 px-3 py-1.5 rounded-full border border-slate-800 flex items-center gap-2">
                 <span class="relative flex h-2 w-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -70,6 +106,49 @@
                 </span>
                 VLIR-UOS / IUC
             </span>
+            {% if user.is_authenticated %}
+            <div class="relative">
+                <button id="notification-bell-btn" aria-label="Notifications" class="relative p-2 text-slate-400 hover:text-white transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                    </svg>
+                    {% if unread_notifications_count %}
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                </button>
+                <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-slate-900 border border-slate-800 rounded-lg shadow-xl z-50">
+                    <div class="p-3 border-b border-slate-800">
+                        <h3 class="text-white font-semibold text-sm">Notifications</h3>
+                    </div>
+                    <div class="max-h-96 overflow-y-auto">
+                        {% if recent_notifications %}
+                            {% for notification in recent_notifications %}
+                            <a href="{% url 'user_account_settings' %}?section=notifications" class="block p-3 hover:bg-slate-800/50 border-b border-slate-800/50 last:border-b-0 {% if not notification.is_read %}bg-slate-800/30{% endif %}">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 mt-0.5">
+                                        <span class="inline-flex items-center justify-center w-2 h-2 rounded-full {% if notification.notification_type == 'success' %}bg-emerald-400{% elif notification.notification_type == 'warning' %}bg-yellow-400{% elif notification.notification_type == 'error' %}bg-red-400{% else %}bg-blue-400{% endif %}"></span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-white truncate">{{ notification.title }}</p>
+                                        <p class="text-xs text-slate-400 mt-0.5 line-clamp-2">{{ notification.message|truncatechars:80 }}</p>
+                                        <p class="text-[10px] text-slate-500 mt-1">{{ notification.created_at|timesince }} ago</p>
+                                    </div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        {% else %}
+                            <div class="p-6 text-center">
+                                <p class="text-sm text-slate-400">No notifications yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="p-2 border-t border-slate-800">
+                        <a href="{% url 'user_account_settings' %}?section=notifications" class="block text-center text-xs text-indigo-400 hover:text-indigo-300 py-2">View all notifications</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </nav>
 
@@ -90,37 +169,366 @@
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-col">
-                <div class="footer-brand">ARU IoT Atlas</div>
-                <p class="footer-desc">A Dublin Core–aligned catalogue of IoT sensor deployments across ARU's IUC research projects.</p>
+                <div class="footer-brand">{{ general_settings.portal_name|default:'ARU IoT Dataset Catalogue' }}</div>
+                <p class="footer-desc">A Dublin Core–aligned catalogue of IoT sensor deployments across {{ general_settings.institution_name|default:"ARU" }}'s IUC research projects.</p>
                 <p class="footer-edition">EDITION 01 • MMXXVI</p>
             </div>
             <div class="footer-col">
-                <h4 class="footer-heading">Portal</h4>
+                <h4 class="footer-heading">{% trans 'Contact' %}</h4>
                 <ul>
-                    <li><a href="{% url 'home' %}">Atlas</a></li>
-                    <li><a href="{% url 'browse_catalogue' %}">Catalogue</a></li>
-                    <li><a href="{% url 'admin_analytics_dashboard' %}">Analytics</a></li>
-                    <li><a href="{% url 'register_dataset' %}">Register</a></li>
-                    <li><a href="{% url 'governance_policy' %}">Governance</a></li>
+                    {% if general_settings.contact_email %}
+                    <li><a href="mailto:{{ general_settings.contact_email }}">{{ general_settings.contact_email }}</a></li>
+                    {% endif %}
+                    {% if general_settings.contact_phone %}
+                    <li><a href="tel:{{ general_settings.contact_phone }}">{{ general_settings.contact_phone }}</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'feedback' %}">{% trans 'Feedback' %}</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h4 class="footer-heading">Standards</h4>
+                <h4 class="footer-heading">{% trans 'Portal' %}</h4>
                 <ul>
-                    <li><a href="{% url 'governance_policy' %}">Open data governance</a></li>
-                    <li><a href="https://dublincore.org" target="_blank" rel="noopener">Dublin Core ↗</a></li>
+                    <li><a href="{% url 'home' %}">{% trans 'Home' %}</a></li>
+                    <li><a href="{% url 'browse_catalogue' %}">{% trans 'Catalogue' %}</a></li>
+                    <li><a href="{% url 'register_dataset' %}">{% trans 'Register' %}</a></li>
+                    <li><a href="{% url 'governance_policy' %}">{% trans 'Governance' %}</a></li>
+                    {% if user.is_authenticated %}
+                        {% if user.is_staff or user.is_superuser or user.role == 'Admin' %}
+                        <li><a href="{% url 'admin_dashboard' %}">{% trans 'Dashboard' %}</a></li>
+                        <li><a href="{% url 'admin_analytics_dashboard' %}">{% trans 'Analytics' %}</a></li>
+                        {% endif %}
+                    {% endif %}
                 </ul>
             </div>
             <div class="footer-col">
-                <h4 class="footer-heading">Stewardship</h4>
-                <p>Catalogue stewards review submissions for completeness and quality. All datasets are curated before publication.</p>
+                <h4 class="footer-heading">{% trans 'Standards' %}</h4>
+                <ul>
+                <li><a href="{% url 'governance_policy' %}">Open data governance</a></li>
+                <li><a href="https://dublincore.org" target="_blank" rel="noopener">Dublin Core ↗</a></li>
+                </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <span>© 2026 ARU IoT Atlas. All rights reserved.</span>
-            <span>v0.2.0 · midnight-indigo</span>
+            <span>© 2026 {{ general_settings.institution_name|default:'ARU' }} IoT Dataset Catalogue. All rights reserved.</span>
+            <span>v0.2.0 · {{ general_settings.time_zone|default:'Africa/Dar_es_Salaam' }}</span>
         </div>
     </footer>
 
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-indigo-600 rounded-md flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-500/20">A</div>
+                <div>
+                    <div class="text-white font-semibold text-sm tracking-wide">ARU IoT</div>
+                    <div class="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Dataset Catalogue</div>
+                </div>
+            </div>
+            <button id="sidebar-close" aria-label="Close Navigation" class="sidebar-close-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{% url 'home' %}" class="sidebar-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Home
+            </a>
+            <a href="{% url 'browse_catalogue' %}" class="sidebar-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                Catalogue
+            </a>
+            <a href="{% url 'governance_policy' %}" class="sidebar-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Governance
+            </a>
+            <a href="{% url 'feedback' %}" class="sidebar-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                Feedback
+            </a>
+
+            {% if user.is_authenticated %}
+                {% if user.is_staff or user.is_superuser or user.role == 'Admin' %}
+                <div class="sidebar-divider"></div>
+                <a href="{% url 'admin_dashboard' %}" class="sidebar-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <div class="sidebar-group">
+                    <div class="sidebar-group-label">Management</div>
+                    <a href="{% url 'admin_user_management' %}" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Manage Users
+                    </a>
+                    <a href="{% url 'admin_dataset_management' %}" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        Manage Datasets
+                    </a>
+                    <a href="{% url 'admin_category_management' %}" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                        Manage Categories
+                    </a>
+                    <a href="{% url 'admin_feedback' %}" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        Review Feedback
+                    </a>
+                </div>
+                <a href="{% url 'admin_analytics_dashboard' %}" class="sidebar-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    Analytics
+                </a>
+                <a href="{% url 'admin_reports' %}" class="sidebar-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Reports
+                </a>
+                <a href="{% url 'admin_settings' %}" class="sidebar-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    System Settings
+                </a>
+                {% if user.is_staff or user.is_superuser or user.role == 'Admin' %}
+                <a href="{% url 'register_dataset' %}" class="sidebar-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Register Dataset
+                </a>
+                {% endif %}
+                {% else %}
+                <div class="sidebar-divider"></div>
+                <a href="{% url 'user_dashboard' %}" class="sidebar-link">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </a>
+                <div class="sidebar-group">
+                    <div class="sidebar-group-label">My Data</div>
+                    <a href="{% url 'user_dashboard' %}#profile" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        My Profile
+                    </a>
+                    <a href="{% url 'user_dashboard' %}#uploads" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        My Uploaded Datasets
+                    </a>
+                    <a href="{% url 'user_dashboard' %}#downloads" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        My Download History
+                    </a>
+                    <a href="{% url 'user_dashboard' %}#feedback" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        My Feedback
+                    </a>
+                    <a href="{% url 'user_account_settings' %}" class="sidebar-link sidebar-link-sub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Account Settings
+                    </a>
+                </div>
+                {% endif %}
+            {% else %}
+            <div class="sidebar-divider"></div>
+            <a href="{% url 'login' %}" class="sidebar-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                Sign In
+            </a>
+            <a href="{% url 'account_signup' %}" class="sidebar-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                Sign Up
+            </a>
+            <a href="{% url 'custom_admin_login' %}" class="sidebar-link">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Admin
+            </a>
+            {% endif %}
+
+            <div class="sidebar-divider"></div>
+            {% if user.is_authenticated %}
+            <a href="{% url 'account_logout' %}" class="sidebar-link sidebar-link-danger">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Logout
+            </a>
+            {% endif %}
+        </nav>
+    </aside>
+
+    <script>
+        (function() {
+            'use strict';
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarClose = document.getElementById('sidebar-close');
+            const hamburgerLines = hamburgerBtn.querySelectorAll('.hamburger-line');
+            let isOpen = false;
+
+            function openSidebar() {
+                isOpen = true;
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('open');
+                hamburgerBtn.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSidebar() {
+                isOpen = false;
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            function toggleSidebar() {
+                if (isOpen) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            }
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('click', toggleSidebar);
+            }
+
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', closeSidebar);
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeSidebar);
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isOpen) {
+                    closeSidebar();
+                }
+            });
+
+            if (hamburgerBtn) {
+                hamburgerBtn.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleSidebar();
+                    }
+                });
+            }
+        })();
+    </script>
+    <script>
+        (function() {
+            const DEFAULT_TIMEZONE = 'Africa/Dar_es_Salaam';
+
+            function detectAndSaveTimezone() {
+                if (!navigator.geolocation) {
+                    fetch("{% url 'detect_timezone' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({ time_zone: DEFAULT_TIMEZONE }),
+                    })
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        if (data.success) {
+                            console.log('Default time zone saved:', data.time_zone);
+                        }
+                    })
+                    .catch(function() {});
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        fetch("{% url 'detect_timezone' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            },
+                            body: JSON.stringify({
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                            }),
+                        })
+                        .then(function(response) { return response.json(); })
+                        .then(function(data) {
+                            if (data.success) {
+                                console.log('Time zone detected and saved:', data.time_zone);
+                            }
+                        })
+                        .catch(function() {});
+                    },
+                    function() {
+                        fetch("{% url 'detect_timezone' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}',
+                            },
+                            body: JSON.stringify({ time_zone: DEFAULT_TIMEZONE }),
+                        })
+                        .then(function(response) { return response.json(); })
+                        .then(function(data) {
+                            if (data.success) {
+                                console.log('Default time zone saved:', data.time_zone);
+                            }
+                        })
+                        .catch(function() {});
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 10000,
+                        maximumAge: 300000,
+                    }
+                );
+            }
+
+            {% if user.is_authenticated and not user_timezone_auto_detected %}
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', detectAndSaveTimezone);
+            } else {
+                detectAndSaveTimezone();
+            }
+            {% endif %}
+        })();
+
+        (function() {
+            var theme = "{{ current_theme }}";
+            var html = document.documentElement;
+
+            function applyTheme(value) {
+                if (value === 'system') {
+                    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    html.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+                } else {
+                    html.setAttribute('data-theme', value);
+                }
+            }
+
+            applyTheme(theme);
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                if (theme === 'system') {
+                    applyTheme('system');
+                }
+            });
+        })();
+
+        (function() {
+            var bellBtn = document.getElementById('notification-bell-btn');
+            var dropdown = document.getElementById('notification-dropdown');
+
+            if (bellBtn && dropdown) {
+                bellBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!bellBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

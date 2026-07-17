@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:40px;">
+
+    <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+            <h1 style="font-size:1.5rem; font-weight:700; letter-spacing:0.01em;">Feedback Management</h1>
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Review, search, filter, and manage user feedback.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a href="{% url 'admin_feedback' %}" class="btn btn-outline" style="padding:10px 16px; font-size:0.85rem;">Clear filters</a>
+            <a href="{% url 'export_feedback_csv' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="btn btn-primary" style="padding:10px 16px; font-size:0.85rem;">Export CSV</a>
+        </div>
+    </div>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="glass-panel" style="padding:20px; margin-bottom:24px;">
+        <form method="get" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+            <div style="flex:1; min-width:200px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">Search</label>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Search comments, users, emails..." style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+            </div>
+            <div style="min-width:160px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">Category</label>
+                <select name="category" style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+                    <option value="">All</option>
+                    {% for value, label in category_choices %}
+                    <option value="{{ value }}" {% if category_filter == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="min-width:160px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">Status</label>
+                <select name="status" style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+                    <option value="">All</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding:10px 20px; font-size:0.85rem;">Apply</button>
+        </form>
+    </div>
+
+    <div class="glass-panel" style="padding:0; overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Category</th>
+                        <th>Comment</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in feedbacks %}
+                    <tr class="log-row">
+                        <td class="mono-text">#{{ f.id }}</td>
+                        <td>
+                            {% if f.user %}
+                            <span style="color:var(--text-primary);">{{ f.user.get_full_name|default:f.user.username }}</span>
+                            {% else %}
+                            <span style="color:var(--text-muted);">Anonymous</span>
+                            {% endif %}
+                        </td>
+                        <td><span style="color:var(--accent-gold);">{{ f.rating }}★</span></td>
+                        <td>{{ f.get_category_display }}</td>
+                        <td style="max-width:300px;">
+                            <span style="display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ f.comment|default:"—" }}</span>
+                        </td>
+                        <td>
+                            {% if f.status == 'new' %}
+                            <span class="type-tag" style="background:rgba(77,119,255,0.15); color:var(--accent-cyan); border:1px solid rgba(77,119,255,0.3);">New</span>
+                            {% elif f.status == 'reviewed' %}
+                            <span class="type-tag" style="background:rgba(255,193,7,0.15); color:var(--accent-gold); border:1px solid rgba(255,193,7,0.3);">Reviewed</span>
+                            {% else %}
+                            <span class="type-tag" style="background:rgba(0,255,157,0.15); color:var(--accent-mint); border:1px solid rgba(0,255,157,0.3);">Resolved</span>
+                            {% endif %}
+                        </td>
+                        <td class="mono-text" style="font-size:0.75rem;">{{ f.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>
+                            <form method="post" style="display:flex; flex-direction:column; gap:4px;">
+                                {% csrf_token %}
+                                <input type="hidden" name="feedback_id" value="{{ f.id }}">
+                                <select name="status" style="padding:6px 8px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-size:0.8rem; outline:none;">
+                                    {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if f.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" name="admin_notes" value="" class="btn btn-outline" style="padding:6px 10px; font-size:0.75rem;">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding:40px; color:var(--text-secondary);">No feedback records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

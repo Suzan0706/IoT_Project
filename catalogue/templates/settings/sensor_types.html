@@ -1,0 +1,95 @@
+{% extends 'settings/base.html' %}
+
+{% block settings_content %}
+<div class="settings-page">
+    <div class="settings-page-header">
+        <h1 class="settings-page-title">Sensor Types</h1>
+        <p class="settings-page-desc">Manage sensor types available for dataset registration.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ edit_sensor_type|yesno:'Edit,Add' }} Sensor Type</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if edit_sensor_type %}
+                        <input type="hidden" name="sensor_type_id" value="{{ edit_sensor_type.id }}">
+                        {% endif %}
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label">Active</label>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{{ edit_sensor_type|yesno:'Update,Add' }} Sensor Type</button>
+                            {% if edit_sensor_type %}
+                            <a href="{% url 'admin_settings_sensor_types' %}" class="btn btn-outline-secondary">Cancel</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">All Sensor Types</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sensor_type in sensor_types %}
+                                <tr>
+                                    <td>{{ sensor_type.name }}</td>
+                                    <td>
+                                        <span class="badge {% if sensor_type.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {% if sensor_type.is_active %}Active{% else %}Inactive{% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a href="{% url 'admin_settings_sensor_types_toggle' sensor_type.pk %}" class="btn btn-sm btn-outline-warning">
+                                            {% if sensor_type.is_active %}Deactivate{% else %}Activate{% endif %}
+                                        </a>
+                                        <a href="{% url 'admin_settings_sensor_types_edit' sensor_type.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <form method="post" action="{% url 'admin_settings_sensor_types_delete' sensor_type.pk %}" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this sensor type?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">No sensor types found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

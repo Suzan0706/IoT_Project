@@ -34,7 +34,13 @@
                     {% for log in system_logs %}
                     <tr class="log-row {% if log.action_type == 'error' %}alert-state-red{% endif %}">
                         <td class="mono-text">{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
-                        <td>{{ log.user.username|upper|default:"SYSTEM ANONYMOUS" }}</td>
+                        <td>
+                            {% if log.user %}
+                                {{ log.user.username|upper }}
+                            {% else %}
+                                SYSTEM ANONYMOUS
+                            {% endif %}
+                        </td>
                         <td>
                             {% if log.action_type == 'download' %}
                             <span class="pill-tag tag-download">FILE DOWNLOADED</span>

@@ -1,0 +1,144 @@
+
+/* Theme System */
+[data-theme="light"] {
+    --bg-deep: #f8f9fa;
+    --bg-surface: rgba(255, 255, 255, 0.85);
+    --bg-surface-solid: #ffffff;
+    --border-glass: rgba(0, 0, 0, 0.06);
+    --border-glass-strong: rgba(0, 0, 0, 0.12);
+    --text-primary: #1a1a2e;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --accent-purple: #6f42c1;
+    --accent-cyan: #0d6efd;
+    --accent-mint: #198754;
+    --accent-gold: #ffc107;
+    --accent-indigo: #6610f2;
+    --shadow-glass: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] {
+    --bg-deep: #0b0c10;
+    --bg-surface: rgba(20, 22, 30, 0.65);
+    --bg-surface-solid: #14161e;
+    --border-glass: rgba(255, 255, 255, 0.05);
+    --border-glass-strong: rgba(255, 255, 255, 0.1);
+    --text-primary: #e9ecef;
+    --text-secondary: #b0b8c4;
+    --text-muted: #6c757d;
+    --accent-purple: #8A2BE2;
+    --accent-cyan: #4D77FF;
+    --accent-mint: #00ff9d;
+    --accent-gold: #ffc107;
+    --accent-indigo: #4D77FF;
+    --shadow-glass: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="system"] {
+    /* Uses default dark theme variables from :root */
+}
+
+/* Apply theme to body */
+body {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glass panels adapt to theme */
+.glass-panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+    box-shadow: 0 8px 32px var(--shadow-glass);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Text colors adapt */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+p, span, div {
+    color: var(--text-secondary);
+}
+
+/* Tables adapt */
+.cyber-data-table {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+}
+
+.cyber-data-table th {
+    background: var(--bg-surface-solid);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-glass-strong);
+}
+
+.cyber-data-table td {
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-glass);
+}
+
+.log-row:hover {
+    background: var(--bg-surface-solid);
+}
+
+/* Inputs adapt */
+input, textarea, select {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass-strong);
+    color: var(--text-primary);
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 3px var(--accent-cyan-soft);
+}
+
+/* Cards adapt */
+.card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+}
+
+/* Buttons keep their accent colors */
+.btn-primary {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple);
+    color: #ffffff;
+}
+
+.btn-outline {
+    border-color: var(--border-glass-strong);
+    color: var(--text-primary);
+}
+
+.btn-outline:hover {
+    background: var(--bg-surface-solid);
+}
+
+/* Settings sidebar */
+.user-settings-sidebar {
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-glass);
+}
+
+.settings-nav-item {
+    color: var(--text-secondary);
+}
+
+.settings-nav-item:hover,
+.settings-nav-item.active {
+    background: var(--bg-surface-solid);
+    color: var(--text-primary);
+}
+
+/* Messages */
+.messages {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-glass);
+}
+
+.messages p {
+    color: var(--text-primary);
+}

@@ -1,0 +1,64 @@
+{% extends 'settings/base.html' %}
+
+{% block settings_content %}
+<div class="settings-page">
+    <div class="settings-page-header">
+        <h1 class="settings-page-title">User Settings</h1>
+        <p class="settings-page-desc">Configure registration, roles, password policy, and notifications.</p>
+    </div>
+
+    <div class="card" style="max-width: 800px;">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            {{ form.enable_registration }}
+                            <label class="form-check-label">Enable User Registration</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            {{ form.require_admin_approval }}
+                            <label class="form-check-label">Require Admin Approval</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            {{ form.enable_email_verification }}
+                            <label class="form-check-label">Enable Email Verification</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            {{ form.enable_email_notifications }}
+                            <label class="form-check-label">Enable Email Notifications</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Default User Role</label>
+                        {{ form.default_user_role }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Minimum Password Length</label>
+                        {{ form.min_password_length }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Maximum Login Attempts</label>
+                        {{ form.max_login_attempts }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Session Timeout (minutes)</label>
+                        {{ form.session_timeout_minutes }}
+                    </div>
+                </div>
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a href="{% url 'admin_settings' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

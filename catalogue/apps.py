@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
+import os
 
 def auto_create_google_social_app(sender, **kwargs):
     """
@@ -9,7 +10,13 @@ def auto_create_google_social_app(sender, **kwargs):
     try:
         from django.contrib.sites.models import Site
         from allauth.socialaccount.models import SocialApp
-        
+
+        client_id = os.getenv('GOOGLE_OAUTH_CLIENT_ID', '')
+        secret = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET', '')
+
+        if not client_id or not secret:
+            return
+
         # 1. Force establish the default local development site domain
         site, created = Site.objects.get_or_create(
             id=1, 
@@ -25,8 +32,8 @@ def auto_create_google_social_app(sender, **kwargs):
             provider='google',
             defaults={
                 'name': 'Google Auth Portal',
-                'client_id': 'placeholder-id-apps.googleusercontent.com',
-                'secret': 'placeholder-secret-key-string',
+                'client_id': client_id,
+                'secret': secret,
             }
         )
         

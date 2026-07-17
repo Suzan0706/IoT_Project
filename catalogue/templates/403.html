@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:40px; max-width:600px; margin-left:auto; margin-right:auto; text-align:center;">
+    <div class="glass-panel" style="padding:40px;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-red); margin-bottom:16px;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        <h1 style="font-size:1.75rem; font-weight:700; color:var(--text-primary); margin-bottom:8px;">Access Denied</h1>
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:24px;">You do not have permission to access this page. Please contact an administrator if you believe this is an error.</p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="{% url 'home' %}" class="btn btn-primary">Go to Home</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'user_dashboard' %}" class="btn btn-outline">My Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

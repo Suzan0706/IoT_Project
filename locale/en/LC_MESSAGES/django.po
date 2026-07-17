@@ -1,0 +1,833 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ARU IoT Portal 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-01 00:00+0000\n"
+"PO-Revision-Date: 2026-01-01 00:00+0000\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Profile"
+msgstr "Profile"
+
+msgid "Account"
+msgstr "Account"
+
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "Privacy"
+msgstr "Privacy"
+
+msgid "Appearance"
+msgstr "Appearance"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Save Changes"
+msgstr "Save Changes"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Submit"
+msgstr "Submit"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Add"
+msgstr "Add"
+
+msgid "Search"
+msgstr "Search"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Export"
+msgstr "Export"
+
+msgid "Import"
+msgstr "Import"
+
+msgid "Back"
+msgstr "Back"
+
+msgid "Next"
+msgstr "Next"
+
+msgid "Previous"
+msgstr "Previous"
+
+msgid "Loading"
+msgstr "Loading"
+
+msgid "Success"
+msgstr "Success"
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "Yes"
+msgstr "Yes"
+
+msgid "No"
+msgstr "No"
+
+msgid "Confirm"
+msgstr "Confirm"
+
+msgid "Close"
+msgstr "Close"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "Upload"
+msgstr "Upload"
+
+msgid "View"
+msgstr "View"
+
+msgid "Manage"
+msgstr "Manage"
+
+msgid "Create"
+msgstr "Create"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Remove"
+msgstr "Remove"
+
+msgid "Sign In"
+msgstr "Sign In"
+
+msgid "Sign Up"
+msgstr "Sign Up"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Register"
+msgstr "Register"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Full Name"
+msgstr "Full Name"
+
+msgid "Phone Number"
+msgstr "Phone Number"
+
+msgid "Remember me"
+msgstr "Remember me"
+
+msgid "Forgot password?"
+msgstr "Forgot password?"
+
+msgid "Reset password"
+msgstr "Reset password"
+
+msgid "Change password"
+msgstr "Change password"
+
+msgid "Current password"
+msgstr "Current password"
+
+msgid "New password"
+msgstr "New password"
+
+msgid "Confirm password"
+msgstr "Confirm password"
+
+msgid "I agree to the terms"
+msgstr "I agree to the terms"
+
+msgid "My Profile"
+msgstr "My Profile"
+
+msgid "Edit Profile"
+msgstr "Edit Profile"
+
+msgid "Update Profile"
+msgstr "Update Profile"
+
+msgid "Profile Picture"
+msgstr "Profile Picture"
+
+msgid "Upload Picture"
+msgstr "Upload Picture"
+
+msgid "Biography"
+msgstr "Biography"
+
+msgid "Institution"
+msgstr "Institution"
+
+msgid "Department"
+msgstr "Department"
+
+msgid "Dataset"
+msgstr "Dataset"
+
+msgid "Datasets"
+msgstr "Datasets"
+
+msgid "Register Dataset"
+msgstr "Register Dataset"
+
+msgid "Upload Dataset"
+msgstr "Upload Dataset"
+
+msgid "My Datasets"
+msgstr "My Datasets"
+
+msgid "Browse Catalogue"
+msgstr "Browse Catalogue"
+
+msgid "Search Datasets"
+msgstr "Search Datasets"
+
+msgid "Dataset Details"
+msgstr "Dataset Details"
+
+msgid "Quality Score"
+msgstr "Quality Score"
+
+msgid "Downloads"
+msgstr "Downloads"
+
+msgid "License"
+msgstr "License"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Domain"
+msgstr "Domain"
+
+msgid "Sensor Type"
+msgstr "Sensor Type"
+
+msgid "Location"
+msgstr "Location"
+
+msgid "Frequency"
+msgstr "Frequency"
+
+msgid "Units"
+msgstr "Units"
+
+msgid "Manage Users"
+msgstr "Manage Users"
+
+msgid "Manage Datasets"
+msgstr "Manage Datasets"
+
+msgid "Manage Categories"
+msgstr "Manage Categories"
+
+msgid "Review Feedback"
+msgstr "Review Feedback"
+
+msgid "Analytics"
+msgstr "Analytics"
+
+msgid "Reports"
+msgstr "Reports"
+
+msgid "System Settings"
+msgstr "System Settings"
+
+msgid "Admin Dashboard"
+msgstr "Admin Dashboard"
+
+msgid "Total Users"
+msgstr "Total Users"
+
+msgid "Total Datasets"
+msgstr "Total Datasets"
+
+msgid "Total Downloads"
+msgstr "Total Downloads"
+
+msgid "Pending Review"
+msgstr "Pending Review"
+
+msgid "Recent Activity"
+msgstr "Recent Activity"
+
+msgid "Most Downloaded"
+msgstr "Most Downloaded"
+
+msgid "General Settings"
+msgstr "General Settings"
+
+msgid "Dataset Settings"
+msgstr "Dataset Settings"
+
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Sensor Types"
+msgstr "Sensor Types"
+
+msgid "Research Domains"
+msgstr "Research Domains"
+
+msgid "User Settings"
+msgstr "User Settings"
+
+msgid "Security Settings"
+msgstr "Security Settings"
+
+msgid "Backup & Restore"
+msgstr "Backup & Restore"
+
+msgid "System Logs"
+msgstr "System Logs"
+
+msgid "Portal Name"
+msgstr "Portal Name"
+
+msgid "Institution Name"
+msgstr "Institution Name"
+
+msgid "Contact Email"
+msgstr "Contact Email"
+
+msgid "Contact Phone"
+msgstr "Contact Phone"
+
+msgid "Time Zone"
+msgstr "Time Zone"
+
+msgid "Default Language"
+msgstr "Default Language"
+
+msgid "Allowed File Formats"
+msgstr "Allowed File Formats"
+
+msgid "Maximum Upload Size"
+msgstr "Maximum Upload Size"
+
+msgid "Default Visibility"
+msgstr "Default Visibility"
+
+msgid "Public"
+msgstr "Public"
+
+msgid "Private"
+msgstr "Private"
+
+msgid "Enable Versioning"
+msgstr "Enable Versioning"
+
+msgid "Require Metadata"
+msgstr "Require Metadata"
+
+msgid "Enable Registration"
+msgstr "Enable Registration"
+
+msgid "Require Approval"
+msgstr "Require Approval"
+
+msgid "Email Verification"
+msgstr "Email Verification"
+
+msgid "Default Role"
+msgstr "Default Role"
+
+msgid "Password Length"
+msgstr "Password Length"
+
+msgid "Login Attempts"
+msgstr "Login Attempts"
+
+msgid "Session Timeout"
+msgstr "Session Timeout"
+
+msgid "Enable Notifications"
+msgstr "Enable Notifications"
+
+msgid "Two-Factor Auth"
+msgstr "Two-Factor Auth"
+
+msgid "HTTPS Enforcement"
+msgstr "HTTPS Enforcement"
+
+msgid "Audit Logging"
+msgstr "Audit Logging"
+
+msgid "Lockout Duration"
+msgstr "Lockout Duration"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Save Preference"
+msgstr "Save Preference"
+
+msgid "Create Backup"
+msgstr "Create Backup"
+
+msgid "Restore"
+msgstr "Restore"
+
+msgid "Export Database"
+msgstr "Export Database"
+
+msgid "Import Database"
+msgstr "Import Database"
+
+msgid "Settings saved successfully."
+msgstr "Settings saved successfully."
+
+msgid "Profile updated successfully."
+msgstr "Profile updated successfully."
+
+msgid "Profile picture updated successfully."
+msgstr "Profile picture updated successfully."
+
+msgid "Language preference saved successfully."
+msgstr "Language preference saved successfully."
+
+msgid "Please correct the errors below."
+msgstr "Please correct the errors below."
+
+msgid "Are you sure you want to delete this?"
+msgstr "Are you sure you want to delete this?"
+
+msgid "No records found."
+msgstr "No records found."
+
+msgid "Operation successful."
+msgstr "Operation successful."
+
+msgid "Catalogue"
+msgstr "Catalogue"
+
+msgid "Governance"
+msgstr "Governance"
+
+msgid "Feedback"
+msgstr "Feedback"
+
+msgid "My Data"
+msgstr "My Data"
+
+msgid "My Uploaded Datasets"
+msgstr "My Uploaded Datasets"
+
+msgid "My Download History"
+msgstr "My Download History"
+
+msgid "My Feedback"
+msgstr "My Feedback"
+
+msgid "Account Settings"
+msgstr "Account Settings"
+
+msgid "Get Support"
+msgstr "Get Support"
+
+msgid "Browse More"
+msgstr "Browse More"
+
+msgid "Give Feedback"
+msgstr "Give Feedback"
+
+msgid "Upload New"
+msgstr "Upload New"
+
+msgid "All rights reserved."
+msgstr "All rights reserved."
+
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Inactive"
+msgstr "Inactive"
+
+msgid "Pending"
+msgstr "Pending"
+
+msgid "Live"
+msgstr "Live"
+
+msgid "Draft"
+msgstr "Draft"
+
+msgid "Resolved"
+msgstr "Resolved"
+
+msgid "New"
+msgstr "New"
+
+msgid "Reviewed"
+msgstr "Reviewed"
+
+msgid "Edition"
+msgstr "Edition"
+
+msgid "Open Access"
+msgstr "Open Access"
+
+msgid "Project"
+msgstr "Project"
+
+msgid "Information Science"
+msgstr "Information Science"
+
+msgid "IUC"
+msgstr "IUC"
+
+msgid "VLIR-UOS"
+msgstr "VLIR-UOS"
+
+msgid "ARU IoT"
+msgstr "ARU IoT"
+
+msgid "Dataset Catalogue"
+msgstr "Dataset Catalogue"
+
+msgid "Research Dataset Catalogue"
+msgstr "Research Dataset Catalogue"
+
+msgid "IoT Research Dataset Catalogue"
+msgstr "IoT Research Dataset Catalogue"
+
+msgid "ARU IoT Dataset Catalogue"
+msgstr "ARU IoT Dataset Catalogue"
+
+msgid "System overview and management."
+msgstr "System overview and management."
+
+msgid "Welcome back"
+msgstr "Welcome back"
+
+msgid "Here is your personal activity overview."
+msgstr "Here is your personal activity overview."
+
+msgid "My Dashboard"
+msgstr "My Dashboard"
+
+msgid "Update your profile information and preferences."
+msgstr "Update your profile information and preferences."
+
+msgid "Profile Settings"
+msgstr "Profile Settings"
+
+msgid "Manage your public profile information."
+msgstr "Manage your public profile information."
+
+msgid "Email Address"
+msgstr "Email Address"
+
+msgid "Short Biography"
+msgstr "Short Biography"
+
+msgid "Update your account details."
+msgstr "Update your account details."
+
+msgid "First Name"
+msgstr "First Name"
+
+msgid "Last Name"
+msgstr "Last Name"
+
+msgid "Email cannot be changed here."
+msgstr "Email cannot be changed here."
+
+msgid "Contact an administrator to change your email."
+msgstr "Contact an administrator to change your email."
+
+msgid "Notification Preferences"
+msgstr "Notification Preferences"
+
+msgid "Choose what notifications you receive."
+msgstr "Choose what notifications you receive."
+
+msgid "Email Notifications"
+msgstr "Email Notifications"
+
+msgid "Dataset Approval Notifications"
+msgstr "Dataset Approval Notifications"
+
+msgid "Dataset Rejection Notifications"
+msgstr "Dataset Rejection Notifications"
+
+msgid "New Dataset Alerts"
+msgstr "New Dataset Alerts"
+
+msgid "Privacy Settings"
+msgstr "Privacy Settings"
+
+msgid "Control your profile visibility and data sharing."
+msgstr "Control your profile visibility and data sharing."
+
+msgid "Profile Visibility"
+msgstr "Profile Visibility"
+
+msgid "Allow Other Researchers to View My Profile"
+msgstr "Allow Other Researchers to View My Profile"
+
+msgid "Choose how the portal looks for you."
+msgstr "Choose how the portal looks for you."
+
+msgid "Theme"
+msgstr "Theme"
+
+msgid "Select your preferred color theme."
+msgstr "Select your preferred color theme."
+
+msgid "Select your preferred language."
+msgstr "Select your preferred language."
+
+msgid "Preferred Language"
+msgstr "Preferred Language"
+
+msgid "This will be used for interface translations."
+msgstr "This will be used for interface translations."
+
+msgid "Configure portal name, institution, contact details, and localization."
+msgstr ""
+"Configure portal name, institution, contact details, and localization."
+
+msgid ""
+"Control upload formats, size limits, visibility, and metadata requirements."
+msgstr ""
+"Control upload formats, size limits, visibility, and metadata requirements."
+
+msgid "MB"
+msgstr "MB"
+
+msgid "Default Dataset Visibility"
+msgstr "Default Dataset Visibility"
+
+msgid "Default Data Quality Rating"
+msgstr "Default Data Quality Rating"
+
+msgid "Enable Dataset Versioning"
+msgstr "Enable Dataset Versioning"
+
+msgid "Require Metadata Before Upload"
+msgstr "Require Metadata Before Upload"
+
+msgid "Organize datasets with reusable categories."
+msgstr "Organize datasets with reusable categories."
+
+msgid "Add Category"
+msgstr "Add Category"
+
+msgid "Edit Category"
+msgstr "Edit Category"
+
+msgid "Delete Category"
+msgstr "Delete Category"
+
+msgid "Search Categories"
+msgstr "Search Categories"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Manage sensor types available for dataset registration."
+msgstr "Manage sensor types available for dataset registration."
+
+msgid "Add Sensor Type"
+msgstr "Add Sensor Type"
+
+msgid "Edit Sensor Type"
+msgstr "Edit Sensor Type"
+
+msgid "Delete Sensor Type"
+msgstr "Delete Sensor Type"
+
+msgid "Activate"
+msgstr "Activate"
+
+msgid "Deactivate"
+msgstr "Deactivate"
+
+msgid "Manage research domains for dataset classification."
+msgstr "Manage research domains for dataset classification."
+
+msgid "Add Domain"
+msgstr "Add Domain"
+
+msgid "Edit Domain"
+msgstr "Edit Domain"
+
+msgid "Delete Domain"
+msgstr "Delete Domain"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Configure registration, roles, password policy, and notifications."
+msgstr "Configure registration, roles, password policy, and notifications."
+
+msgid "Enable User Registration"
+msgstr "Enable User Registration"
+
+msgid "Require Admin Approval"
+msgstr "Require Admin Approval"
+
+msgid "Enable Email Verification"
+msgstr "Enable Email Verification"
+
+msgid "Default User Role"
+msgstr "Default User Role"
+
+msgid "Researcher"
+msgstr "Researcher"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Minimum Password Length"
+msgstr "Minimum Password Length"
+
+msgid "Maximum Login Attempts"
+msgstr "Maximum Login Attempts"
+
+msgid "minutes"
+msgstr "minutes"
+
+msgid "Enable Email Notifications"
+msgstr "Enable Email Notifications"
+
+msgid "Manage authentication, password policy, and access control."
+msgstr "Manage authentication, password policy, and access control."
+
+msgid "Password Complexity Rules"
+msgstr "Password Complexity Rules"
+
+msgid "Enable Two-Factor Authentication"
+msgstr "Enable Two-Factor Authentication"
+
+msgid "Enforce HTTPS"
+msgstr "Enforce HTTPS"
+
+msgid "Login Audit Logging"
+msgstr "Login Audit Logging"
+
+msgid "Failed Login Lockout Duration"
+msgstr "Failed Login Lockout Duration"
+
+msgid "Create, schedule, and restore system backups."
+msgstr "Create, schedule, and restore system backups."
+
+msgid "Backup Name"
+msgstr "Backup Name"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Notes"
+msgstr "Notes"
+
+msgid "Backup History"
+msgstr "Backup History"
+
+msgid "No backups found."
+msgstr "No backups found."
+
+msgid "Monitor login activity, user actions, dataset uploads, and errors."
+msgstr "Monitor login activity, user actions, dataset uploads, and errors."
+
+msgid "Logs"
+msgstr "Logs"
+
+msgid "Timestamp"
+msgstr "Timestamp"
+
+msgid "Level"
+msgstr "Level"
+
+msgid "User"
+msgstr "User"
+
+msgid "Action"
+msgstr "Action"
+
+msgid "IP Address"
+msgstr "IP Address"
+
+msgid "No logs found."
+msgstr "No logs found."
+
+msgid "Export Logs"
+msgstr "Export Logs"
+
+msgid "All Types"
+msgstr "All Types"
+
+msgid "All Levels"
+msgstr "All Levels"
+
+msgid "Critical"
+msgstr "Critical"
+
+msgid "User Activity"
+msgstr "User Activity"
+
+msgid "Dataset Upload"
+msgstr "Dataset Upload"
+
+msgid "Security"
+msgstr "Security"
+
+msgid "System"
+msgstr "System"

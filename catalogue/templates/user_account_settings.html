@@ -1,0 +1,601 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="user-settings-layout">
+    <div class="user-settings-sidebar">
+        <div class="user-settings-sidebar-header">
+            <h5 class="user-settings-sidebar-title">{% trans 'Settings' %}</h5>
+        </div>
+        <nav class="user-settings-sidebar-nav">
+            <a href="?section=profile-picture" class="settings-nav-item {% if section == 'profile-picture' %}active{% endif %}">
+                <i class="fas fa-camera"></i> {% trans 'Profile Picture' %}
+            </a>
+            <a href="?section=profile" class="settings-nav-item {% if section == 'profile' %}active{% endif %}">
+                <i class="fas fa-user"></i> {% trans 'Profile' %}
+            </a>
+            <a href="?section=account" class="settings-nav-item {% if section == 'account' %}active{% endif %}">
+                <i class="fas fa-key"></i> {% trans 'Account' %}
+            </a>
+            <a href="?section=notifications" class="settings-nav-item {% if section == 'notifications' %}active{% endif %}">
+                <i class="fas fa-bell"></i> {% trans 'Notifications' %}
+            </a>
+            <a href="?section=privacy" class="settings-nav-item {% if section == 'privacy' %}active{% endif %}">
+                <i class="fas fa-lock"></i> {% trans 'Privacy' %}
+            </a>
+            <a href="?section=appearance" class="settings-nav-item {% if section == 'appearance' %}active{% endif %}">
+                <i class="fas fa-palette"></i> {% trans 'Appearance' %}
+            </a>
+            <a href="?section=language" class="settings-nav-item {% if section == 'language' %}active{% endif %}">
+                <i class="fas fa-globe"></i> {% trans 'Language' %}
+            </a>
+            <a href="?section=timezone" class="settings-nav-item {% if section == 'timezone' %}active{% endif %}">
+                <i class="fas fa-clock"></i> {% trans 'Time Zone' %}
+            </a>
+        </nav>
+    </div>
+
+    <div class="user-settings-content">
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Profile Picture -->
+        {% if section == 'profile-picture' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Profile Picture' %}</h1>
+                <p class="settings-page-desc">{% trans 'Upload and manage your profile avatar.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 600px;">
+                <div class="card-body text-center">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="profile_picture">
+
+                        <div class="mb-4">
+                            {% if profile and profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="{% trans 'Profile Picture' %}" class="rounded-circle" style="width:120px; height:120px; object-fit:cover; border:4px solid var(--border-glass-strong); box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+                            {% else %}
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width:120px; height:120px; background:linear-gradient(135deg, rgba(99,102,241,0.35), rgba(168,85,247,0.35)); color:#c7d2fe; font-size:3rem; border:4px solid var(--border-glass-strong); box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">{% trans 'Upload New Picture' %}</label>
+                            {{ profile_picture_form.profile_picture }}
+                            <div class="form-text">{% trans 'Allowed formats: JPG, JPEG, PNG. Maximum size: 2MB.' %}</div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button type="submit" class="btn btn-primary">{% trans 'Upload Picture' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Settings -->
+        {% elif section == 'profile' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Profile Settings' %}</h1>
+                <p class="settings-page-desc">{% trans 'Manage your public profile information.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="profile_settings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Full Name' %}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" value="{{ request.user.get_full_name }}" disabled>
+                                </div>
+                                <div class="form-text">{% trans 'Full name is managed from your account details.' %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Email Address' %}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" value="{{ request.user.email }}" disabled>
+                                </div>
+                                <div class="form-text">{% trans 'Email cannot be changed here.' %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Institution' %}</label>
+                                {{ profile_form.institution }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Department' %}</label>
+                                {{ profile_form.department }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Phone Number' %}</label>
+                                {{ profile_form.phone_number }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">{% trans 'Short Biography' %}</label>
+                                {{ profile_form.biography }}
+                                <div class="form-text">{% trans 'Brief description for your public profile.' %}</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{% trans 'Save Changes' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Settings -->
+        {% elif section == 'account' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Account Settings' %}</h1>
+                <p class="settings-page-desc">{% trans 'Update your account details.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="account_settings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'First Name' %}</label>
+                                {{ account_form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Last Name' %}</label>
+                                {{ account_form.last_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Email Address' %}</label>
+                                {{ account_form.email }}
+                                <div class="form-text">{% trans 'Contact an administrator to change your email.' %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Phone Number' %}</label>
+                                {{ account_form.phone_number }}
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{% trans 'Save Changes' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Preferences -->
+        {% elif section == 'notifications' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Notification Preferences' %}</h1>
+                <p class="settings-page-desc">{% trans 'Choose what notifications you receive.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="notification_preferences">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    {{ notification_form.email_notifications }}
+                                    <label class="form-check-label">{% trans 'Email Notifications' %}</label>
+                                </div>
+                                <div class="form-text">{% trans 'Receive general email notifications about the portal.' %}</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    {{ notification_form.dataset_approval_notifications }}
+                                    <label class="form-check-label">{% trans 'Dataset Approval Notifications' %}</label>
+                                </div>
+                                <div class="form-text">{% trans 'Get notified when your dataset is approved.' %}</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    {{ notification_form.dataset_rejection_notifications }}
+                                    <label class="form-check-label">{% trans 'Dataset Rejection Notifications' %}</label>
+                                </div>
+                                <div class="form-text">{% trans 'Get notified when your dataset is rejected.' %}</div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    {{ notification_form.new_dataset_alerts }}
+                                    <label class="form-check-label">{% trans 'New Dataset Alerts' %}</label>
+                                </div>
+                                <div class="form-text">{% trans 'Receive alerts when new datasets are published in your domains.' %}</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{% trans 'Save Changes' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Settings -->
+        {% elif section == 'privacy' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Privacy Settings' %}</h1>
+                <p class="settings-page-desc">{% trans 'Control your profile visibility and data sharing.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="privacy_settings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Profile Visibility' %}</label>
+                                {{ privacy_form.profile_visibility }}
+                                <div class="form-text">{% trans 'Choose who can see your profile.' %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mt-4">
+                                    {{ privacy_form.allow_others_to_view_profile }}
+                                    <label class="form-check-label">{% trans 'Allow Other Researchers to View My Profile' %}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{% trans 'Save Changes' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appearance Settings -->
+        {% elif section == 'appearance' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Appearance' %}</h1>
+                <p class="settings-page-desc">{% trans 'Choose how the portal looks for you.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <div class="card-body">
+                    <form method="post" id="appearance-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="appearance_settings">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">{% trans 'Theme' %}</label>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-4">
+                                        <div class="theme-card {% if profile.theme_preference == 'light' %}selected{% endif %}" data-theme-value="light" onclick="selectTheme('light')">
+                                            <div class="theme-preview" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px solid #dee2e6;">
+                                                <div style="height: 8px; background: #0d6efd; border-radius: 2px; margin-bottom: 6px;"></div>
+                                                <div style="height: 6px; background: #adb5bd; border-radius: 2px; margin-bottom: 4px;"></div>
+                                                <div style="height: 6px; background: #ced4da; border-radius: 2px; width: 80%;"></div>
+                                            </div>
+                                            <div class="theme-name">Light</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="theme-card {% if profile.theme_preference == 'dark' %}selected{% endif %}" data-theme-value="dark" onclick="selectTheme('dark')">
+                                            <div class="theme-preview" style="background: linear-gradient(135deg, #14161e 0%, #1a1e3a 100%); border: 2px solid #4D77FF;">
+                                                <div style="height: 8px; background: #8A2BE2; border-radius: 2px; margin-bottom: 6px;"></div>
+                                                <div style="height: 6px; background: #4D77FF; border-radius: 2px; margin-bottom: 4px; opacity: 0.6;"></div>
+                                                <div style="height: 6px; background: #00ff9d; border-radius: 2px; width: 80%; opacity: 0.6;"></div>
+                                            </div>
+                                            <div class="theme-name">Dark</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="theme-card {% if profile.theme_preference == 'system' %}selected{% endif %}" data-theme-value="system" onclick="selectTheme('system')">
+                                            <div class="theme-preview" style="background: linear-gradient(135deg, #f8f9fa 50%, #14161e 50%); border: 2px solid #adb5bd;">
+                                                <div style="height: 8px; background: linear-gradient(90deg, #0d6efd 50%, #8A2BE2 50%); border-radius: 2px; margin-bottom: 6px;"></div>
+                                                <div style="height: 6px; background: linear-gradient(90deg, #adb5bd 50%, #4D77FF 50%); border-radius: 2px; margin-bottom: 4px;"></div>
+                                                <div style="height: 6px; background: linear-gradient(90deg, #ced4da 50%, #00ff9d 50%); border-radius: 2px; width: 80%;"></div>
+                                            </div>
+                                            <div class="theme-name">System</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="theme_preference" id="theme_preference_input" value="{{ profile.theme_preference|default:'system' }}">
+                                <div class="form-text">{% trans 'Select your preferred color theme. Changes apply immediately.' %}</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{% trans 'Save Preference' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .theme-card {
+                cursor: pointer;
+                border-radius: 12px;
+                overflow: hidden;
+                transition: all 0.2s ease;
+                border: 2px solid transparent;
+            }
+            .theme-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            .theme-card.selected {
+                border-color: #8A2BE2;
+                box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.25);
+            }
+            .theme-preview {
+                height: 80px;
+                padding: 12px;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+            }
+            .theme-name {
+                text-align: center;
+                padding: 8px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                background: var(--bg-surface-solid);
+                color: var(--text-primary);
+            }
+        </style>
+
+        <!-- Language Settings -->
+        {% elif section == 'language' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Language' %}</h1>
+                <p class="settings-page-desc">{% trans 'Select your preferred language.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="language_settings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Preferred Language' %}</label>
+                                {{ language_form.preferred_language }}
+                                <div class="form-text">{% trans 'This will be used for interface translations.' %}</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">{% trans 'Save Preference' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time Zone Settings -->
+        {% elif section == 'timezone' %}
+        <div class="settings-page">
+            <div class="settings-page-header">
+                <h1 class="settings-page-title">{% trans 'Time Zone' %}</h1>
+                <p class="settings-page-desc">{% trans 'Manage your time zone for accurate date and time display.' %}</p>
+            </div>
+
+            <div class="card" style="max-width: 800px;">
+                <div class="card-body">
+                    <form method="post" id="timezone-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="timezone_settings">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Current Detected Time Zone' %}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                                    <input type="text" class="form-control" id="detected-timezone" readonly placeholder="Detecting...">
+                                </div>
+                                <div class="form-text" id="detection-status">{% trans 'Detecting your time zone...' %}</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Select Time Zone' %}</label>
+                                {{ timezone_form.time_zone }}
+                                <div class="form-text">{% trans 'Choose your preferred time zone. All dates and times will be displayed in this time zone.' %}</div>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <label class="form-label">{% trans 'Current Local Time Preview' %}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                    <input type="text" class="form-control" id="local-time-preview" readonly placeholder="Preview will appear here">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="button" class="btn btn-outline-primary" id="detect-timezone-btn">
+                                <i class="fas fa-search-location"></i> {% trans 'Detect Current Time Zone' %}
+                            </button>
+                            <button type="submit" class="btn btn-primary">{% trans 'Save Changes' %}</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary">{% trans 'Cancel' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+(function() {
+    const DEFAULT_TIMEZONE = 'Africa/Dar_es_Salaam';
+    const detectedInput = document.getElementById('detected-timezone');
+    const statusDiv = document.getElementById('detection-status');
+    const timezoneSelect = document.getElementById('id_time_zone');
+    const previewInput = document.getElementById('local-time-preview');
+    const detectBtn = document.getElementById('detect-timezone-btn');
+
+    function formatLocalDate() {
+        if (!timezoneSelect || !previewInput) return;
+        try {
+            const tz = timezoneSelect.value || DEFAULT_TIMEZONE;
+            const now = new Date();
+            const options = {
+                timeZone: tz,
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+            };
+            previewInput.value = new Intl.DateTimeFormat('en', options).format(now);
+        } catch (e) {
+            previewInput.value = '';
+        }
+    }
+
+    function setDetectedTimezone(timezone) {
+        if (!timezone) {
+            timezone = DEFAULT_TIMEZONE;
+            if (statusDiv) {
+                statusDiv.textContent = 'Automatic detection failed. Default time zone selected.';
+                statusDiv.classList.add('text-warning');
+            }
+        } else if (statusDiv) {
+            statusDiv.textContent = 'Detected time zone: ' + timezone;
+            statusDiv.classList.remove('text-warning');
+        }
+        if (detectedInput) detectedInput.value = timezone;
+        if (timezoneSelect) timezoneSelect.value = timezone;
+        formatLocalDate();
+    }
+
+    function detectTimezone() {
+        if (statusDiv) {
+            statusDiv.textContent = 'Requesting location access...';
+            statusDiv.classList.remove('text-warning');
+        }
+
+        if (!navigator.geolocation) {
+            setDetectedTimezone(null);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                if (statusDiv) {
+                    statusDiv.textContent = 'Detecting time zone from location...';
+                }
+
+                fetch("{% url 'detect_timezone' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    }),
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        setDetectedTimezone(data.time_zone);
+                    } else {
+                        setDetectedTimezone(null);
+                    }
+                })
+                .catch(function() {
+                    setDetectedTimezone(null);
+                });
+            },
+            function(error) {
+                let message = 'Location access denied.';
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = 'Location access denied. Using default time zone.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = 'Location unavailable. Using default time zone.';
+                        break;
+                    case error.TIMEOUT:
+                        message = 'Location request timed out. Using default time zone.';
+                        break;
+                }
+                if (statusDiv) {
+                    statusDiv.textContent = message;
+                    statusDiv.classList.add('text-warning');
+                }
+                setDetectedTimezone(null);
+            },
+            {
+                enableHighAccuracy: false,
+                timeout: 10000,
+                maximumAge: 300000,
+            }
+        );
+    }
+
+    if (detectBtn) {
+        detectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            detectTimezone();
+        });
+    }
+
+    if (timezoneSelect) {
+        timezoneSelect.addEventListener('change', formatLocalDate);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', detectTimezone);
+    } else {
+        detectTimezone();
+    }
+})();
+
+function selectTheme(theme) {
+    document.querySelectorAll('.theme-card').forEach(function(card) {
+        card.classList.remove('selected');
+    });
+    var selectedCard = document.querySelector('.theme-card[data-theme-value="' + theme + '"]');
+    if (selectedCard) {
+        selectedCard.classList.add('selected');
+    }
+    var input = document.getElementById('theme_preference_input');
+    if (input) {
+        input.value = theme;
+    }
+    var html = document.documentElement;
+    if (theme === 'system') {
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+        html.setAttribute('data-theme', theme);
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,836 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ARU IoT Portal 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-01 00:00+0000\n"
+"PO-Revision-Date: 2026-01-01 00:00+0000\n"
+"Language: sw\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Home"
+msgstr "Nyumbani"
+
+msgid "Dashboard"
+msgstr "Dashibodi"
+
+msgid "Settings"
+msgstr "Mipangilio"
+
+msgid "Profile"
+msgstr "Wasifu"
+
+msgid "Account"
+msgstr "Akaunti"
+
+msgid "Notifications"
+msgstr "Arifa"
+
+msgid "Privacy"
+msgstr "Faragha"
+
+msgid "Appearance"
+msgstr "Muonekano"
+
+msgid "Language"
+msgstr "Lugha"
+
+msgid "Save Changes"
+msgstr "Hifadhi Mabadiliko"
+
+msgid "Cancel"
+msgstr "Ghairi"
+
+msgid "Submit"
+msgstr "Wasilisha"
+
+msgid "Delete"
+msgstr "Futa"
+
+msgid "Edit"
+msgstr "Hariri"
+
+msgid "Add"
+msgstr "Ongeza"
+
+msgid "Search"
+msgstr "Tafuta"
+
+msgid "Filter"
+msgstr "Chuja"
+
+msgid "Export"
+msgstr "Sambaza"
+
+msgid "Import"
+msgstr "Leta"
+
+msgid "Back"
+msgstr "Nyuma"
+
+msgid "Next"
+msgstr "Inayofuata"
+
+msgid "Previous"
+msgstr "Iliyotangulia"
+
+msgid "Loading"
+msgstr "Inapakia"
+
+msgid "Success"
+msgstr "Mafanikio"
+
+msgid "Error"
+msgstr "Kosa"
+
+msgid "Warning"
+msgstr "Onyo"
+
+msgid "Info"
+msgstr "Taarifa"
+
+msgid "Yes"
+msgstr "Ndio"
+
+msgid "No"
+msgstr "Hapana"
+
+msgid "Confirm"
+msgstr "Thibitisha"
+
+msgid "Close"
+msgstr "Funga"
+
+msgid "Open"
+msgstr "Fungua"
+
+msgid "Download"
+msgstr "Pakua"
+
+msgid "Upload"
+msgstr "Pakia"
+
+msgid "View"
+msgstr "Angalia"
+
+msgid "Manage"
+msgstr "Dhibiti"
+
+msgid "Create"
+msgstr "Unda"
+
+msgid "Update"
+msgstr "Sasisha"
+
+msgid "Remove"
+msgstr "Ondoa"
+
+msgid "Sign In"
+msgstr "Ingia"
+
+msgid "Sign Up"
+msgstr "Jisajili"
+
+msgid "Logout"
+msgstr "Ondoka"
+
+msgid "Login"
+msgstr "Ingia"
+
+msgid "Register"
+msgstr "Jisajili"
+
+msgid "Email"
+msgstr "Barua pepe"
+
+msgid "Password"
+msgstr "Nenosiri"
+
+msgid "Username"
+msgstr "Jina la mtumiaji"
+
+msgid "Full Name"
+msgstr "Jina kamili"
+
+msgid "Phone Number"
+msgstr "Nambari ya simu"
+
+msgid "Remember me"
+msgstr "Nikumbuke"
+
+msgid "Forgot password?"
+msgstr "Umesahau nenosiri?"
+
+msgid "Reset password"
+msgstr "Weka upya nenosiri"
+
+msgid "Change password"
+msgstr "Badilisha nenosiri"
+
+msgid "Current password"
+msgstr "Nenosiri la sasa"
+
+msgid "New password"
+msgstr "Nenosiri jipya"
+
+msgid "Confirm password"
+msgstr "Thibitisha nenosiri"
+
+msgid "I agree to the terms"
+msgstr "Ninakubali masharti"
+
+msgid "My Profile"
+msgstr "Wasifu wangu"
+
+msgid "Edit Profile"
+msgstr "Hariri wasifu"
+
+msgid "Update Profile"
+msgstr "Sasisha wasifu"
+
+msgid "Profile Picture"
+msgstr "Picha ya wasifu"
+
+msgid "Upload Picture"
+msgstr "Pakia picha"
+
+msgid "Biography"
+msgstr "Wasifu"
+
+msgid "Institution"
+msgstr "Taasisi"
+
+msgid "Department"
+msgstr "Kitengo"
+
+msgid "Dataset"
+msgstr "Seti ya data"
+
+msgid "Datasets"
+msgstr "Seti za data"
+
+msgid "Register Dataset"
+msgstr "Jisajili seti ya data"
+
+msgid "Upload Dataset"
+msgstr "Pakia seti ya data"
+
+msgid "My Datasets"
+msgstr "Seti zangu za data"
+
+msgid "Browse Catalogue"
+msgstr "Tafuta katala"
+
+msgid "Search Datasets"
+msgstr "Tafuta seti za data"
+
+msgid "Dataset Details"
+msgstr "Maelezo ya seti ya data"
+
+msgid "Quality Score"
+msgstr "Alama ya ubora"
+
+msgid "Downloads"
+msgstr "Vipakuli"
+
+msgid "License"
+msgstr "Leseni"
+
+msgid "Status"
+msgstr "Hali"
+
+msgid "Domain"
+msgstr "Kikoa"
+
+msgid "Sensor Type"
+msgstr "Aina ya sensa"
+
+msgid "Location"
+msgstr "Eneo"
+
+msgid "Frequency"
+msgstr "Mzunguko"
+
+msgid "Units"
+msgstr "Vipimo"
+
+msgid "Manage Users"
+msgstr "Dhibiti watumiaji"
+
+msgid "Manage Datasets"
+msgstr "Dhibiti seti za data"
+
+msgid "Manage Categories"
+msgstr "Dhibiti kategoria"
+
+msgid "Review Feedback"
+msgstr "Kagua maoni"
+
+msgid "Analytics"
+msgstr "Uchambuzi"
+
+msgid "Reports"
+msgstr "Ripoti"
+
+msgid "System Settings"
+msgstr "Mipangilio ya mfumo"
+
+msgid "Admin Dashboard"
+msgstr "Dashibodi ya msimamizi"
+
+msgid "Total Users"
+msgstr "Jumla ya watumiaji"
+
+msgid "Total Datasets"
+msgstr "Jumla ya seti za data"
+
+msgid "Total Downloads"
+msgstr "Jumla ya vipakuli"
+
+msgid "Pending Review"
+msgstr "Inasubiri kaguzi"
+
+msgid "Recent Activity"
+msgstr "Shughuli za hivi punde"
+
+msgid "Most Downloaded"
+msgstr "Imepakuliwa zaidi"
+
+msgid "General Settings"
+msgstr "Mipangilio ya jumla"
+
+msgid "Dataset Settings"
+msgstr "Mipangilio ya seti za data"
+
+msgid "Categories"
+msgstr "Kategoria"
+
+msgid "Sensor Types"
+msgstr "Aina za sensa"
+
+msgid "Research Domains"
+msgstr "Maeneo ya utafiti"
+
+msgid "User Settings"
+msgstr "Mipangilio ya mtumiaji"
+
+msgid "Security Settings"
+msgstr "Mipangilio ya usalama"
+
+msgid "Backup & Restore"
+msgstr "Hifadhi nakala na reseti"
+
+msgid "System Logs"
+msgstr "Logi za mfumo"
+
+msgid "Portal Name"
+msgstr "Jina la portal"
+
+msgid "Institution Name"
+msgstr "Jina la taasisi"
+
+msgid "Contact Email"
+msgstr "Barua pepe ya mawasiliano"
+
+msgid "Contact Phone"
+msgstr "Nambari ya simu"
+
+msgid "Time Zone"
+msgstr "Saa za dunia"
+
+msgid "Default Language"
+msgstr "Lugha ya chaguo-msingi"
+
+msgid "Allowed File Formats"
+msgstr "Aina za faili zinazoruhusiwa"
+
+msgid "Maximum Upload Size"
+msgstr "Ukubwa wa juu wa upakiaji"
+
+msgid "Default Visibility"
+msgstr "Uonekano wa chaguo-msingi"
+
+msgid "Public"
+msgstr "Umma"
+
+msgid "Private"
+msgstr "Binafsi"
+
+msgid "Enable Versioning"
+msgstr "Washa toleo"
+
+msgid "Require Metadata"
+msgstr "Hitaji metadata"
+
+msgid "Enable Registration"
+msgstr "Washa usajili"
+
+msgid "Require Approval"
+msgstr "Hitaji ridhaa"
+
+msgid "Email Verification"
+msgstr "Uthibitisho wa barua pepe"
+
+msgid "Default Role"
+msgstr "Wajibu wa chaguo-msingi"
+
+msgid "Password Length"
+msgstr "Urefu wa nenosiri"
+
+msgid "Login Attempts"
+msgstr "Jaribio za kuingia"
+
+msgid "Session Timeout"
+msgstr "Muda wa kuvuja kikao"
+
+msgid "Enable Notifications"
+msgstr "Washa arifa"
+
+msgid "Two-Factor Auth"
+msgstr "Uthibitisho wa viwango viwili"
+
+msgid "HTTPS Enforcement"
+msgstr "Ulakaji wa HTTPS"
+
+msgid "Audit Logging"
+msgstr "Kusanya logi"
+
+msgid "Lockout Duration"
+msgstr "Muda wa kufungwa"
+
+msgid "Save"
+msgstr "Hifadhi"
+
+msgid "Save Preference"
+msgstr "Hifadhi mapendeleo"
+
+msgid "Create Backup"
+msgstr "Unda hifadhi nakala"
+
+msgid "Restore"
+msgstr "Rekebisha"
+
+msgid "Export Database"
+msgstr "Sambaza hifadhi data"
+
+msgid "Import Database"
+msgstr "Leta hifadhi data"
+
+msgid "Settings saved successfully."
+msgstr "Mipangilio imehifadhiwa kwa mafanikio."
+
+msgid "Profile updated successfully."
+msgstr "Wasifu umesasishwa kwa mafanikio."
+
+msgid "Profile picture updated successfully."
+msgstr "Picha ya wasifu imesasishwa kwa mafanikio."
+
+msgid "Language preference saved successfully."
+msgstr "Mapendeleo ya lugha yamehifadhiwa kwa mafanikio."
+
+msgid "Please correct the errors below."
+msgstr "Tafadhali sahihisha makosa yaliyoko hapa chini."
+
+msgid "Are you sure you want to delete this?"
+msgstr "Una uhakika unataka kufuta hii?"
+
+msgid "No records found."
+msgstr "Hakuna rekodi zilizopatikana."
+
+msgid "Operation successful."
+msgstr "Opereshi imefanikiwa."
+
+msgid "Catalogue"
+msgstr "Katala"
+
+msgid "Governance"
+msgstr "Utawala"
+
+msgid "Feedback"
+msgstr "Maoni"
+
+msgid "My Data"
+msgstr "Data yangu"
+
+msgid "My Uploaded Datasets"
+msgstr "Seti za data niliyopakia"
+
+msgid "My Download History"
+msgstr "Historia ya vipakuli"
+
+msgid "My Feedback"
+msgstr "Maoni yangu"
+
+msgid "Account Settings"
+msgstr "Mipangilio ya akaunti"
+
+msgid "Get Support"
+msgstr "Pata msaada"
+
+msgid "Browse More"
+msgstr "Tafuta zaidi"
+
+msgid "Give Feedback"
+msgstr "Toa maoni"
+
+msgid "Upload New"
+msgstr "Pakia mpya"
+
+msgid "All rights reserved."
+msgstr "Haki zote zimehifadhiwa."
+
+msgid "Privacy Policy"
+msgstr "Sera ya faragha"
+
+msgid "Terms of Service"
+msgstr "Masharti ya huduma"
+
+msgid "Active"
+msgstr "Inaendesha"
+
+msgid "Inactive"
+msgstr "Haijaendesha"
+
+msgid "Pending"
+msgstr "Inasubiri"
+
+msgid "Live"
+msgstr "Inaonyesha"
+
+msgid "Draft"
+msgstr "Rasimu"
+
+msgid "Resolved"
+msgstr "Imetolewa"
+
+msgid "New"
+msgstr "Mpya"
+
+msgid "Reviewed"
+msgstr "Imekaguliwa"
+
+msgid "Edition"
+msgstr "Chapisho"
+
+msgid "Open Access"
+msgstr "Ufikiaji wa umma"
+
+msgid "Project"
+msgstr "Mradi"
+
+msgid "Information Science"
+msgstr "Sayansi ya habari"
+
+msgid "IUC"
+msgstr "IUC"
+
+msgid "VLIR-UOS"
+msgstr "VLIR-UOS"
+
+msgid "ARU IoT"
+msgstr "ARU IoT"
+
+msgid "Dataset Catalogue"
+msgstr "Katala ya seti za data"
+
+msgid "Research Dataset Catalogue"
+msgstr "Katala ya seti za data za utafiti"
+
+msgid "IoT Research Dataset Catalogue"
+msgstr "Katala ya Seti za Data za IoT"
+
+msgid "ARU IoT Dataset Catalogue"
+msgstr "Katala ya Seti za Data ya ARU IoT"
+
+msgid "System overview and management."
+msgstr "Muhtasari na udhibiti wa mfumo."
+
+msgid "Welcome back"
+msgstr "Karibu tena"
+
+msgid "Here is your personal activity overview."
+msgstr "Hii ni muhtasari wa shughuli zako za kibinafsi."
+
+msgid "My Dashboard"
+msgstr "Dashibodi Yangu"
+
+msgid "Update your profile information and preferences."
+msgstr "Sasisha taarifa na mapendeleo yako ya wasifu."
+
+msgid "Profile Settings"
+msgstr "Mipangilio ya Wasifu"
+
+msgid "Manage your public profile information."
+msgstr "Dhibiti taarifa za wasifu wako wa umma."
+
+msgid "Email Address"
+msgstr "Barua Pepe"
+
+msgid "Short Biography"
+msgstr "Wasifu Mfupi"
+
+msgid "Update your account details."
+msgstr "Sasisha maelezo ya akaunti yako."
+
+msgid "First Name"
+msgstr "Jina la Kwanza"
+
+msgid "Last Name"
+msgstr "Jina la Mwisho"
+
+msgid "Email cannot be changed here."
+msgstr "Barua pepe haiwezi kubadilishwa hapa."
+
+msgid "Contact an administrator to change your email."
+msgstr "Wasiliana na msimamizi ili kubadilisha barua pepe."
+
+msgid "Notification Preferences"
+msgstr "Mapendeleo ya Arifa"
+
+msgid "Choose what notifications you receive."
+msgstr "Chagua ni arifa zipi unazopokea."
+
+msgid "Email Notifications"
+msgstr "Arifa za Barua Pepe"
+
+msgid "Dataset Approval Notifications"
+msgstr "Arifa za Ridhaa ya Seti za Data"
+
+msgid "Dataset Rejection Notifications"
+msgstr "Arifa za Kukataliwa kwa Seti za Data"
+
+msgid "New Dataset Alerts"
+msgstr "Arifa za Seti Mpya za Data"
+
+msgid "Privacy Settings"
+msgstr "Mipangilio ya Faragha"
+
+msgid "Control your profile visibility and data sharing."
+msgstr "Dhibiti uonekano wa wasifu na kushiriki data."
+
+msgid "Profile Visibility"
+msgstr "Uonekano wa Wasifu"
+
+msgid "Allow Other Researchers to View My Profile"
+msgstr "Ruhusu Watafiti Wengine Kuangalia Wasifu Wangu"
+
+msgid "Choose how the portal looks for you."
+msgstr "Chagua jinsi portal inavyoonekana kwako."
+
+msgid "Theme"
+msgstr "Mfumo wa Rangi"
+
+msgid "Select your preferred color theme."
+msgstr "Chagua mfumo wa rangi unapendekezacho."
+
+msgid "Select your preferred language."
+msgstr "Chagua lugha unayopendekezayo."
+
+msgid "Preferred Language"
+msgstr "Lugha ya Urejeleo"
+
+msgid "This will be used for interface translations."
+msgstr "Hii itatumika kwa tafuzi za kiolesura."
+
+msgid "Configure portal name, institution, contact details, and localization."
+msgstr ""
+"Sanidi jina la portal, taasisi, maelezo ya mawasiliano, na uanzilishaji."
+
+msgid ""
+"Control upload formats, size limits, visibility, and metadata requirements."
+msgstr ""
+"Dhibiti aina za upakiaji, kikomo cha saizi, uonekano, na mahitaji ya "
+"metadata."
+
+msgid "MB"
+msgstr "MB"
+
+msgid "Default Dataset Visibility"
+msgstr "Uonekano wa Chaguo-msingi wa Seti ya Data"
+
+msgid "Default Data Quality Rating"
+msgstr "Alama ya Ubora wa Chaguo-msingi"
+
+msgid "Enable Dataset Versioning"
+msgstr "Washa Toleo la Seti za Data"
+
+msgid "Require Metadata Before Upload"
+msgstr "Hitaji Metadata Kabla ya Kupakia"
+
+msgid "Organize datasets with reusable categories."
+msgstr "Panga seti za data kwa kategoria zinazotumika tena."
+
+msgid "Add Category"
+msgstr "Ongeza Kategoria"
+
+msgid "Edit Category"
+msgstr "Hariri Kategoria"
+
+msgid "Delete Category"
+msgstr "Futa Kategoria"
+
+msgid "Search Categories"
+msgstr "Tafuta Kategoria"
+
+msgid "Name"
+msgstr "Jina"
+
+msgid "Description"
+msgstr "Maelezo"
+
+msgid "Actions"
+msgstr "Vitendo"
+
+msgid "Manage sensor types available for dataset registration."
+msgstr "Dhibiti aina za sensa zinazopatikana kwa usajili wa seti za data."
+
+msgid "Add Sensor Type"
+msgstr "Ongeza Aina ya Sensa"
+
+msgid "Edit Sensor Type"
+msgstr "Hariri Aina ya Sensa"
+
+msgid "Delete Sensor Type"
+msgstr "Futa Aina ya Sensa"
+
+msgid "Activate"
+msgstr "Amilisha"
+
+msgid "Deactivate"
+msgstr "Zima"
+
+msgid "Manage research domains for dataset classification."
+msgstr "Dhibiti maeneo ya utafiti kwa uclassification wa seti za data."
+
+msgid "Add Domain"
+msgstr "Ongeza Kikoa"
+
+msgid "Edit Domain"
+msgstr "Hariri Kikoa"
+
+msgid "Delete Domain"
+msgstr "Futa Kikoa"
+
+msgid "Slug"
+msgstr "Kifupi"
+
+msgid "Configure registration, roles, password policy, and notifications."
+msgstr "Sanidi usajili, wajibu, sera ya nenosiri, na arifa."
+
+msgid "Enable User Registration"
+msgstr "Washa Usajili wa Watumiaji"
+
+msgid "Require Admin Approval"
+msgstr "Hitaji Ridhaa ya Msimamizi"
+
+msgid "Enable Email Verification"
+msgstr "Washa Uthibitisho wa Barua Pepe"
+
+msgid "Default User Role"
+msgstr "Wajibu wa Chaguo-msingi"
+
+msgid "Researcher"
+msgstr "Mtafiti"
+
+msgid "Admin"
+msgstr "Msimamizi"
+
+msgid "Minimum Password Length"
+msgstr "Urefu wa Chini wa Nenosiri"
+
+msgid "Maximum Login Attempts"
+msgstr "Jaribio za Juu za Kuingia"
+
+msgid "minutes"
+msgstr "dakika"
+
+msgid "Enable Email Notifications"
+msgstr "Washa Arifa za Barua Pepe"
+
+msgid "Manage authentication, password policy, and access control."
+msgstr "Dhibiti uthibitisho, sera ya nenosiri, na udhibiti wa ufikiaji."
+
+msgid "Password Complexity Rules"
+msgstr "Sheria za Ugumu wa Nenosiri"
+
+msgid "Enable Two-Factor Authentication"
+msgstr "Washa Uthibitisho wa Viwango Viwili"
+
+msgid "Enforce HTTPS"
+msgstr "Lazimisha HTTPS"
+
+msgid "Login Audit Logging"
+msgstr "Kusanya Logi za Kuingia"
+
+msgid "Failed Login Lockout Duration"
+msgstr "Muda wa Kufungwa baada ya Kuingia Kukosa"
+
+msgid "Create, schedule, and restore system backups."
+msgstr "Unda, ratibi, na reseti hifadhi nakala za mfumo."
+
+msgid "Backup Name"
+msgstr "Jina la Hifadhi Nakala"
+
+msgid "Type"
+msgstr "Aina"
+
+msgid "Notes"
+msgstr "Vidokezo"
+
+msgid "Backup History"
+msgstr "Historia ya Hifadhi Nakala"
+
+msgid "No backups found."
+msgstr "Hakuna hifadhi nakala zilizopatikana."
+
+msgid "Monitor login activity, user actions, dataset uploads, and errors."
+msgstr ""
+"Fuatilia shughuli za kuingia, vitendo vya watumiaji, upakiaji wa seti za "
+"data, na makosa."
+
+msgid "Logs"
+msgstr "Logi"
+
+msgid "Timestamp"
+msgstr "Muda"
+
+msgid "Level"
+msgstr "Kiwango"
+
+msgid "User"
+msgstr "Mtumiaji"
+
+msgid "Action"
+msgstr "Kitendo"
+
+msgid "IP Address"
+msgstr "Anwani ya IP"
+
+msgid "No logs found."
+msgstr "Hakuna logi zilizopatikana."
+
+msgid "Export Logs"
+msgstr "Sambaza Logi"
+
+msgid "All Types"
+msgstr "Aina Zote"
+
+msgid "All Levels"
+msgstr "Viwango Vyote"
+
+msgid "Critical"
+msgstr "Muhimu"
+
+msgid "User Activity"
+msgstr "Shughuli za Mtumiaji"
+
+msgid "Dataset Upload"
+msgstr "Upakiaji wa Seti ya Data"
+
+msgid "Security"
+msgstr "Usalama"
+
+msgid "System"
+msgstr "Mfumo"

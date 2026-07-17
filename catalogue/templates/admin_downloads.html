@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:40px; max-width:1200px; margin-left:auto; margin-right:auto;">
+    <div style="margin-bottom:24px;">
+        <h1 style="font-size:1.75rem; font-weight:700; letter-spacing:0.01em;">All Downloads</h1>
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Track all dataset download activity across the portal.</p>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:24px;">
+        {% for message in messages %}
+        <div class="messages {{ message.tags }}" style="margin-bottom:8px;">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="glass-panel" style="padding:20px; margin-bottom:24px;">
+        <form method="get" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+            <div style="flex:1; min-width:200px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">Search</label>
+                <input type="text" name="q" value="{{ search_query }}" placeholder="User, dataset, endpoint..." style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding:10px 20px; font-size:0.85rem;">Apply</button>
+        </form>
+    </div>
+
+    <div class="glass-panel" style="padding:0; overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Dataset</th>
+                        <th>Endpoint</th>
+                        <th>IP Address</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr class="log-row">
+                        <td>
+                            {% if log.user %}
+                                {{ log.user.get_full_name|default:log.user.username }}
+                            {% else %}
+                                Anonymous
+                            {% endif %}
+                        </td>
+                        <td style="max-width:260px;">{{ log.details|truncatechars:60 }}</td>
+                        <td style="font-family:monospace; font-size:0.8rem;">{{ log.endpoint_path }}</td>
+                        <td style="font-family:monospace; font-size:0.8rem;">{{ log.ip_address|default:"—" }}</td>
+                        <td style="font-size:0.85rem;">{{ log.timestamp|date:"M d, H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:40px; color:var(--text-secondary);">No downloads recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

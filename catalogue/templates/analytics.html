@@ -1,9 +1,14 @@
+{% load i18n %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics Dashboard — ARU IoT Atlas</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Analytics Dashboard ARU IoT Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -21,7 +26,57 @@
     <style>
         .bg-card-dark { background-color: #11142b; border: 1px solid #1e293b; }
         .chart-fallback { display: flex; align-items: center; justify-content: center; height: 100%; color: #64748b; font-size: 12px; }
+        img, svg { max-width: 100%; height: auto; }
+        table { table-layout: auto; }
+        .break-words { word-wrap: break-word; overflow-wrap: break-word; }
     </style>
+    <script>
+        const appVersion = '{{ settings.VERSION|default:"1.0" }}';
+        const swUrl = '/sw.js?v=' + appVersion;
+
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error || e.message);
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+        });
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register(swUrl, { scope: '/' }).then(function(registration) {
+            registration.update().catch(function() {});
+          }).catch(function(err) {
+            console.warn('ServiceWorker registration failed:', err);
+          });
+        }
+        window.addEventListener('beforeunload', function() {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              registrations.forEach(function(registration) {
+                registration.unregister();
+              });
+            });
+          }
+        });
+        window.addEventListener('keydown', function(e) {
+          if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+            e.preventDefault();
+            if ('caches' in window) {
+              caches.keys().then(function(names) {
+                names.forEach(function(name) {
+                  caches.delete(name);
+                });
+              });
+            }
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                registrations.forEach(function(registration) {
+                  registration.unregister();
+                });
+              });
+            }
+            window.location.reload(true);
+          }
+        });
+    </script>
 </head>
 <body class="bg-[#0b0d19] text-slate-300 font-sans antialiased min-h-screen">
 
@@ -32,16 +87,16 @@
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 bg-indigo-600 rounded-md flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-500/20">A</div>
                 <div>
-                    <div class="text-white font-semibold text-sm tracking-wide">ARU IoT Atlas</div>
+                    <div class="text-white font-semibold text-sm tracking-wide">ARU IoT Home</div>
                     <div class="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Research Dataset Catalogue</div>
                 </div>
             </div>
             <nav class="flex items-center gap-1">
-                <a href="{% url 'home' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Atlas</a>
-                <a href="{% url 'browse_catalogue' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Catalogue</a>
-                <a href="{% url 'admin_analytics_dashboard' %}" class="px-4 py-2 bg-slate-800 rounded-lg text-white text-sm font-medium shadow-lg shadow-indigo-500/10 border border-slate-700/50">Analytics</a>
-                <a href="{% url 'register_dataset' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Register</a>
-                <a href="{% url 'governance_policy' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Governance</a>
+                <a href="{% url 'home' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">{% trans 'Home' %}</a>
+                <a href="{% url 'browse_catalogue' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">{% trans 'Catalogue' %}</a>
+                <a href="{% url 'admin_analytics_dashboard' %}" class="px-4 py-2 bg-slate-800 rounded-lg text-white text-sm font-medium shadow-lg shadow-indigo-500/10 border border-slate-700/50">{% trans 'Analytics' %}</a>
+                <a href="{% url 'register_dataset' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">{% trans 'Register' %}</a>
+                <a href="{% url 'governance_policy' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">{% trans 'Governance' %}</a>
                 <a href="{% url 'register_dataset' %}" class="ml-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-indigo-500/20">+ Register dataset</a>
                 <a href="{% url 'account_logout' %}" class="px-3 py-1.5 text-sm text-slate-400 hover:text-white transition-colors rounded-md">Sign Out</a>
             </nav>
@@ -60,7 +115,7 @@
         <div class="flex justify-between items-end mb-8">
             <div>
                 <span class="text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-2 block">Catalogue analytics</span>
-                <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-2">How the IoT Atlas is growing</h1>
+                <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-2">                How the IoT Home is growing</h1>
                 <p class="text-slate-400 text-sm max-w-2xl">Live overview of catalogue activity — used by the VLIR-UOS reporting team and ICT &amp; SSIC stewardship to monitor open-data uptake across IUC project domains.</p>
             </div>
             <a href="{% url 'browse_catalogue' %}" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors shrink-0 ml-4">Back to catalogue →</a>
@@ -73,10 +128,10 @@
                     <i data-lucide="layers" class="w-4 h-4"></i>
                 </div>
                 <p class="text-slate-400 text-sm font-medium mb-1">Registered datasets</p>
-                <p class="text-4xl font-bold text-white">12</p>
+                <p class="text-4xl font-bold text-white">{{ total_datasets }}</p>
                 <p class="text-emerald-400 text-xs font-medium mt-2 flex items-center gap-1">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
-                    +0 this month
+                    +{{ datasets_this_month }} this month
                 </p>
             </div>
             <div class="p-6 rounded-xl bg-card-dark relative overflow-hidden shadow-lg shadow-indigo-900/10">
@@ -84,7 +139,7 @@
                     <i data-lucide="download-cloud" class="w-4 h-4"></i>
                 </div>
                 <p class="text-slate-400 text-sm font-medium mb-1">Total downloads</p>
-                <p class="text-4xl font-bold text-white">2,141</p>
+                <p class="text-4xl font-bold text-white">{{ total_downloads|default:0|intcomma }}</p>
                 <p class="text-slate-400 text-xs font-medium mt-2">all-time</p>
             </div>
             <div class="p-6 rounded-xl bg-card-dark relative overflow-hidden shadow-lg shadow-indigo-900/10">
@@ -92,16 +147,73 @@
                     <i data-lucide="star" class="w-4 h-4"></i>
                 </div>
                 <p class="text-slate-400 text-sm font-medium mb-1">Mean quality score</p>
-                <p class="text-4xl font-bold text-white">4.06 / 5</p>
+                <p class="text-4xl font-bold text-white">{{ mean_quality }} <span class="text-lg text-slate-400">/ 5</span></p>
                 <p class="text-slate-400 text-xs font-medium mt-2">across all entries</p>
             </div>
             <div class="p-6 rounded-xl bg-card-dark relative overflow-hidden shadow-lg shadow-indigo-900/10">
                 <div class="absolute top-4 right-4 w-8 h-8 rounded-md bg-slate-800/60 flex items-center justify-center text-slate-400">
-                    <i data-lucide="trending-up" class="w-4 h-4"></i>
+                    <i data-lucide="message-square" class="w-4 h-4"></i>
                 </div>
-                <p class="text-slate-400 text-sm font-medium mb-1">Domains covered</p>
-                <p class="text-4xl font-bold text-white">8</p>
-                <p class="text-slate-400 text-xs font-medium mt-2">8 active</p>
+                <p class="text-slate-400 text-sm font-medium mb-1">Feedback received</p>
+                <p class="text-4xl font-bold text-white">{{ total_feedback }}</p>
+                <p class="text-amber-400 text-xs font-medium mt-2">{{ avg_rating }}★ average</p>
+            </div>
+        </div>
+
+        <!-- Feedback Section -->
+        <div class="rounded-xl bg-card-dark shadow-lg shadow-indigo-900/10 overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-slate-800/60 flex justify-between items-center">
+                <div>
+                    <h3 class="text-white text-lg font-semibold">Recent Feedback</h3>
+                    <p class="text-slate-400 text-sm mt-1">Latest user submissions across all categories</p>
+                </div>
+                <a href="{% url 'admin_feedback' %}" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors">View all feedback →</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="text-slate-500 text-xs tracking-wider uppercase border-b border-slate-800/60">
+                            <th class="px-6 py-3 font-medium">User</th>
+                            <th class="px-6 py-3 font-medium text-center">Rating</th>
+                            <th class="px-6 py-3 font-medium">Category</th>
+                            <th class="px-6 py-3 font-medium">Comment</th>
+                            <th class="px-6 py-3 font-medium text-center">Status</th>
+                            <th class="px-6 py-3 font-medium text-right">Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        {% for f in recent_feedback %}
+                        <tr class="border-b border-slate-800/40 hover:bg-white/[0.02] transition-colors">
+                            <td class="px-6 py-4">
+                                {% if f.user %}
+                                <span class="text-white font-medium">{{ f.user.get_full_name|default:f.user.username }}</span>
+                                {% else %}
+                                <span class="text-slate-500">Anonymous</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-center"><span class="text-amber-400 tracking-widest">{{ f.rating }}★</span></td>
+                            <td class="px-6 py-4 text-slate-400">{{ f.get_category_display }}</td>
+                            <td class="px-6 py-4 text-slate-300 max-w-xs">
+                                <span class="block overflow-hidden text-ellipsis whitespace-nowrap">{{ f.comment|default:"—" }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                {% if f.status == 'new' %}
+                                <span class="inline-flex items-center px-2 py-1 rounded text-[11px] font-mono font-medium bg-indigo-950/50 text-indigo-400 border border-indigo-900/40">New</span>
+                                {% elif f.status == 'reviewed' %}
+                                <span class="inline-flex items-center px-2 py-1 rounded text-[11px] font-mono font-medium bg-amber-950/50 text-amber-400 border border-amber-900/40">Reviewed</span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2 py-1 rounded text-[11px] font-mono font-medium bg-emerald-950/50 text-emerald-400 border border-emerald-900/40">Resolved</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-right text-slate-500 font-mono text-xs">{{ f.created_at|date:"Y-m-d H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-10 text-center text-slate-500">No feedback records yet. They will appear here after users submit feedback.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 

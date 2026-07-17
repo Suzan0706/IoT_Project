@@ -1,0 +1,108 @@
+{% extends 'settings/base.html' %}
+
+{% block settings_content %}
+<div class="settings-page">
+    <div class="settings-page-header">
+        <h1 class="settings-page-title">Backup & Restore</h1>
+        <p class="settings-page-desc">Create, schedule, and restore system backups.</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Create Backup</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Backup Name</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            {{ form.backup_type }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            {{ form.notes }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Create Backup</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Backup History</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-success">Export Database</button>
+                        <button class="btn btn-sm btn-outline-primary">Import Database</button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for backup in backups %}
+                                <tr>
+                                    <td>{{ backup.name }}</td>
+                                    <td>{{ backup.get_backup_type_display }}</td>
+                                    <td>
+                                        <span class="badge {% if backup.status == 'completed' %}bg-success{% elif backup.status == 'failed' %}bg-danger{% elif backup.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                            {{ backup.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ backup.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td class="text-end">
+                                        {% if backup.status == 'completed' %}
+                                        <a href="{{ backup.file_path }}" class="btn btn-sm btn-outline-primary">Download</a>
+                                        {% endif %}
+                                        <button class="btn btn-sm btn-outline-success" onclick="restoreBackup({{ backup.id }})">Restore</button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">No backups found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function restoreBackup(backupId) {
+    if (confirm('Are you sure you want to restore this backup? This will overwrite current data.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '';
+        const csrf = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrf) form.appendChild(csrf.cloneNode(true));
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'restore_backup_id';
+        input.value = backupId;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

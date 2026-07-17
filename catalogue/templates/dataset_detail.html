@@ -11,7 +11,11 @@
         <span class="detail-domain">{{ dataset.domain.name|upper }}</span>
         <h1 class="detail-title">{{ dataset.title }}</h1>
         <p class="detail-description">{{ dataset.description }}</p>
-
+        {% if dataset.status != 'live' %}
+        <div class="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mt-4">
+            <p class="text-xs text-amber-300">This dataset is currently <strong>{{ dataset.status|upper }}</strong> and is not yet publicly visible. A steward will review it shortly.</p>
+        </div>
+        {% endif %}
         <div style="margin-top:8px;">
             <a href="{% url 'dataset_download' dataset.id %}" class="btn btn-primary">⛃ DOWNLOAD RAW STREAMING DATASET</a>
         </div>
@@ -19,6 +23,46 @@
 
     <!-- Right Column -->
     <aside class="detail-sidebar">
+        <div class="sidebar-card glass-panel">
+            <h4>Dataset Metadata</h4>
+            <div class="sidebar-row">
+                <span class="label">TITLE</span>
+                <span class="value">{{ dataset.title }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">DOMAIN</span>
+                <span class="value">{{ dataset.domain.name }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">SENSOR TYPE</span>
+                <span class="value">{{ dataset.sensor_type }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">UNITS</span>
+                <span class="value">{{ dataset.units_of_measurement }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">LOCATION</span>
+                <span class="value">{{ dataset.location }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">IUC PROJECT</span>
+                <span class="value">{{ dataset.iuc_project_code }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">DEPARTMENT</span>
+                <span class="value">{{ dataset.department }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">LICENSE</span>
+                <span class="value">{{ dataset.license }}</span>
+            </div>
+            <div class="sidebar-row">
+                <span class="label">OUTPUT FORMAT</span>
+                <span class="value">{{ dataset.output_format }}</span>
+            </div>
+        </div>
+
         <div class="sidebar-card glass-panel">
             <h4>Technical Properties</h4>
             <div class="sidebar-row">

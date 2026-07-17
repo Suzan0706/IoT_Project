@@ -4,9 +4,83 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ARU IoT — Dashboard</title>
-    <link rel="stylesheet" crossorigin href="/static/assets/index-BFJbQBT1.css">
-    <script type="module" crossorigin src="/static/assets/index-B7PTNW6e.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>ARU IoT Dashboard</title>
+    <link rel="stylesheet" crossorigin href="/static/assets/index-BFJbQBT1.css?v={{ settings.VERSION|default:'1.0' }}">
+    <script type="module" crossorigin src="/static/assets/index-B7PTNW6e.js?v={{ settings.VERSION|default:'1.0' }}"></script>
+    <script>
+      const appVersion = '{{ settings.VERSION|default:"1.0" }}';
+      const swUrl = '/sw.js?v=' + appVersion;
+      const autoReloadEnabled = {{ settings.DEBUG|yesno:'true,false' }};
+
+      window.addEventListener('error', function(e) {
+        console.error('Global error:', e.error || e.message);
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled promise rejection:', e.reason);
+      });
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register(swUrl, { scope: '/' }).then(function(registration) {
+          registration.update().catch(function() {});
+        }).catch(function(err) {
+          console.warn('ServiceWorker registration failed:', err);
+        });
+      }
+      window.addEventListener('beforeunload', function() {
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            registrations.forEach(function(registration) {
+              registration.unregister();
+            });
+          });
+        }
+      });
+      window.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+          e.preventDefault();
+          if ('caches' in window) {
+            caches.keys().then(function(names) {
+              names.forEach(function(name) {
+                caches.delete(name);
+              });
+            });
+          }
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              registrations.forEach(function(registration) {
+                registration.unregister();
+              });
+            });
+          }
+          window.location.reload(true);
+        }
+      });
+      if (autoReloadEnabled) {
+        let autoReloadTriggered = false;
+        const pollAutoReload = function() {
+          if (autoReloadTriggered) {
+            return;
+          }
+          fetch('{% url "auto_reload_status" %}', { cache: 'no-store' })
+            .then(function(response) {
+              return response.ok ? response.json() : null;
+            })
+            .then(function(data) {
+              if (data && data.reload) {
+                autoReloadTriggered = true;
+                window.location.reload();
+              }
+            })
+            .catch(function() {});
+        };
+        window.addEventListener('load', function() {
+          pollAutoReload();
+          window.setInterval(pollAutoReload, 3000);
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

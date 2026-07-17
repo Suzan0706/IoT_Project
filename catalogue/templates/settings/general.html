@@ -1,0 +1,189 @@
+{% extends 'settings/base.html' %}
+
+{% block settings_content %}
+<div class="settings-page">
+    <div class="settings-page-header">
+        <h1 class="settings-page-title">General Settings</h1>
+        <p class="settings-page-desc">Configure portal name, institution, contact details, and localization.</p>
+    </div>
+
+    <div class="card" style="max-width: 1000px;">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <h5 class="mb-3" style="color: var(--text-primary); font-weight: 600;">Portal Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Portal Name</label>
+                            {{ form.portal_name }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Institution Name</label>
+                            {{ form.institution_name }}
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h5 class="mb-3" style="color: var(--text-primary); font-weight: 600;">Contact Information</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                {{ form.contact_email }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Phone</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                {{ form.contact_phone }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="mb-4">
+                    <h5 class="mb-3" style="color: var(--text-primary); font-weight: 600;">Localization</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Time Zone</label>
+                            <div class="alert alert-info py-2 px-3 mb-2" role="alert" id="general-detection-status">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Click Detect to auto-detect your time zone from your current location.
+                            </div>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                                <input type="text" class="form-control" id="general-detected-timezone" readonly placeholder="Detected time zone will appear here">
+                                <button type="button" class="btn btn-outline-primary" id="general-detect-timezone-btn">
+                                    <i class="fas fa-search-location"></i> Detect
+                                </button>
+                            </div>
+                            {{ form.time_zone }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Default Language</label>
+                            {{ form.default_language }}
+                            <div class="form-text">This will be used as the default language for the portal.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <a href="{% url 'admin_settings' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const DEFAULT_TIMEZONE = 'Africa/Dar_es_Salaam';
+    const detectBtn = document.getElementById('general-detect-timezone-btn');
+    const detectedInput = document.getElementById('general-detected-timezone');
+    const statusDiv = document.getElementById('general-detection-status');
+    const timeZoneField = document.querySelector('select[name="time_zone"], input[name="time_zone"]');
+
+    function setDetectedTimezone(timezone) {
+        if (!timezone) {
+            timezone = DEFAULT_TIMEZONE;
+            if (statusDiv) {
+                statusDiv.className = 'alert alert-warning py-2 px-3 mb-2';
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Detection failed. Default time zone selected.';
+            }
+        } else if (statusDiv) {
+            statusDiv.className = 'alert alert-success py-2 px-3 mb-2';
+            statusDiv.innerHTML = '<i class="fas fa-check-circle me-2"></i> Detected: <strong>' + timezone + '</strong>';
+        }
+        if (detectedInput) detectedInput.value = timezone;
+        if (timeZoneField) timeZoneField.value = timezone;
+    }
+
+    function detectTimezone() {
+        if (statusDiv) {
+            statusDiv.className = 'alert alert-info py-2 px-3 mb-2';
+            statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Requesting location access...';
+        }
+
+        if (!navigator.geolocation) {
+            setDetectedTimezone(null);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Detecting time zone from location...';
+                }
+
+                fetch("{% url 'admin_detect_timezone' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    }),
+                })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        setDetectedTimezone(data.time_zone);
+                    } else {
+                        setDetectedTimezone(null);
+                    }
+                })
+                .catch(function() {
+                    setDetectedTimezone(null);
+                });
+            },
+            function(error) {
+                let message = 'Location access denied.';
+                let icon = 'fa-exclamation-triangle';
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = 'Location access denied. Using default time zone.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = 'Location unavailable. Using default time zone.';
+                        break;
+                    case error.TIMEOUT:
+                        message = 'Location request timed out. Using default time zone.';
+                        break;
+                }
+                if (statusDiv) {
+                    statusDiv.className = 'alert alert-warning py-2 px-3 mb-2';
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> ' + message;
+                }
+                setDetectedTimezone(null);
+            },
+            {
+                enableHighAccuracy: false,
+                timeout: 10000,
+                maximumAge: 300000,
+            }
+        );
+    }
+
+    if (detectBtn) {
+        detectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            detectTimezone();
+        });
+    }
+})();
+</script>
+{% endblock %}

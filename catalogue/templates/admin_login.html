@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--bg-surface-solid);">
+    <div class="glass-panel" style="width:100%; max-width:420px; padding:32px;">
+        <div style="text-align:center; margin-bottom:28px;">
+            <div style="width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg, #4D77FF, #8A2BE2); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; color:#fff; font-weight:700; font-size:1.25rem;">A</div>
+            <h1 style="font-size:1.5rem; font-weight:700; color:var(--text-primary); margin:0 0 6px;">Admin Login</h1>
+            <p style="font-size:0.875rem; color:var(--text-secondary); margin:0;">ARU IoT Dataset Catalogue — Administrator access</p>
+        </div>
+
+        {% if messages %}
+        <div style="margin-bottom:20px;">
+            {% for message in messages %}
+            <div class="messages {{ message.tags }}" style="margin-bottom:8px;">
+                <p>{{ message }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" style="display:flex; flex-direction:column; gap:16px;">
+            {% csrf_token %}
+            <div>
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); display:block; margin-bottom:6px;">Username</label>
+                <input type="text" name="username" required style="width:100%; padding:12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.95rem; outline:none;">
+            </div>
+            <div>
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary); display:block; margin-bottom:6px;">Password</label>
+                <input type="password" name="password" required style="width:100%; padding:12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.95rem; outline:none;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px; font-size:0.95rem;">Sign in to Admin</button>
+        </form>
+
+        <div style="margin-top:20px; text-align:center;">
+            <a href="{% url 'home' %}" style="font-size:0.875rem; color:var(--text-secondary); text-decoration:none;">Back to portal</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

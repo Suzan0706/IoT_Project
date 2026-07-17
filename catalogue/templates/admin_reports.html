@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:40px; max-width:1200px; margin-left:auto; margin-right:auto;">
+    <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+            <h1 style="font-size:1.75rem; font-weight:700; letter-spacing:0.01em;">Reports</h1>
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Generate and export system reports.</p>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:24px;">
+        {% for message in messages %}
+        <div class="messages {{ message.tags }}" style="margin-bottom:8px;">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="glass-panel" style="padding:24px; margin-bottom:24px;">
+        <form method="get" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+            <div style="min-width:160px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">Report Type</label>
+                <select name="type" style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+                    <option value="datasets" {% if report_type == 'datasets' %}selected{% endif %}>Datasets</option>
+                    <option value="users" {% if report_type == 'users' %}selected{% endif %}>Users</option>
+                    <option value="downloads" {% if report_type == 'downloads' %}selected{% endif %}>Downloads</option>
+                    <option value="feedback" {% if report_type == 'feedback' %}selected{% endif %}>Feedback</option>
+                </select>
+            </div>
+            <div style="min-width:160px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">Start Date</label>
+                <input type="date" name="start_date" value="{{ start_date }}" style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+            </div>
+            <div style="min-width:160px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">End Date</label>
+                <input type="date" name="end_date" value="{{ end_date }}" style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding:10px 20px; font-size:0.85rem;">Apply Filter</button>
+        </form>
+    </div>
+
+    <div class="glass-panel" style="padding:24px; margin-bottom:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-size:1rem; font-weight:600; color:var(--text-primary);">Report Summary</h3>
+            <a href="?type={{ report_type }}&start_date={{ start_date }}&end_date={{ end_date }}&export=csv" class="btn btn-primary" style="padding:8px 16px; font-size:0.85rem;">Download CSV</a>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
+            <div style="padding:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:var(--radius);">
+                <div style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.06em;">Total Datasets</div>
+                <div style="font-size:1.5rem; font-weight:700; color:var(--text-primary); margin-top:4px;">{{ total_datasets }}</div>
+            </div>
+            <div style="padding:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:var(--radius);">
+                <div style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.06em;">Total Users</div>
+                <div style="font-size:1.5rem; font-weight:700; color:var(--text-primary); margin-top:4px;">{{ total_users }}</div>
+            </div>
+            <div style="padding:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:var(--radius);">
+                <div style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.06em;">Total Downloads</div>
+                <div style="font-size:1.5rem; font-weight:700; color:var(--text-primary); margin-top:4px;">{{ total_downloads }}</div>
+            </div>
+            <div style="padding:16px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:var(--radius);">
+                <div style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.06em;">Total Feedback</div>
+                <div style="font-size:1.5rem; font-weight:700; color:var(--text-primary); margin-top:4px;">{{ total_feedback }}</div>
+            </div>
+        </div>
+    </div>
+
+    {% if report_type == 'datasets' and datasets %}
+    <div class="glass-panel" style="padding:0; overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Domain</th>
+                        <th>Researcher</th>
+                        <th>Status</th>
+                        <th>Quality</th>
+                        <th>Downloads</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ds in datasets %}
+                    <tr class="log-row">
+                        <td>#{{ ds.id }}</td>
+                        <td><a href="{% url 'dataset_detail' ds.id %}" style="color:var(--accent-indigo); text-decoration:none; font-weight:500;">{{ ds.title|default:"Untitled" }}</a></td>
+                        <td>{{ ds.domain.name }}</td>
+                        <td>{{ ds.researcher.get_full_name|default:ds.researcher.username }}</td>
+                        <td>
+                            {% if ds.status == 'live' %}
+                            <span class="type-tag" style="background:rgba(0,255,157,0.15); color:var(--accent-mint); border:1px solid rgba(0,255,157,0.3);">Live</span>
+                            {% elif ds.status == 'pending' %}
+                            <span class="type-tag" style="background:rgba(255,193,7,0.15); color:var(--accent-gold); border:1px solid rgba(255,193,7,0.3);">Pending</span>
+                            {% else %}
+                            <span class="type-tag" style="background:rgba(148,163,184,0.15); color:var(--text-secondary); border:1px solid rgba(148,163,184,0.3);">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ ds.quality_score|floatformat:1 }}</td>
+                        <td>{{ ds.download_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% elif report_type == 'users' and users %}
+    <div class="glass-panel" style="padding:0; overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Full Name</th>
+                        <th>Staff</th>
+                        <th>Superuser</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr class="log-row">
+                        <td>#{{ u.id }}</td>
+                        <td style="font-weight:500;">{{ u.username }}</td>
+                        <td>{{ u.email|default:"—" }}</td>
+                        <td>{{ u.get_full_name|default:"—" }}</td>
+                        <td>
+                            {% if u.is_staff %}
+                            <span class="type-tag" style="background:rgba(0,255,157,0.15); color:var(--accent-mint); border:1px solid rgba(0,255,157,0.3);">Yes</span>
+                            {% else %}
+                            <span class="type-tag" style="background:rgba(255,255,255,0.05); color:var(--text-secondary); border:1px solid rgba(255,255,255,0.1);">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if u.is_superuser %}
+                            <span class="type-tag" style="background:rgba(138,43,226,0.15); color:#d4b8ff; border:1px solid rgba(138,43,226,0.3);">Yes</span>
+                            {% else %}
+                            <span class="type-tag" style="background:rgba(255,255,255,0.05); color:var(--text-secondary); border:1px solid rgba(255,255,255,0.1);">No</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ u.date_joined|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% elif report_type == 'downloads' and downloads %}
+    <div class="glass-panel" style="padding:0; overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                        <th>Endpoint</th>
+                        <th>IP Address</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in downloads %}
+                    <tr class="log-row">
+                        <td>#{{ log.id }}</td>
+                        <td>
+                            {% if log.user %}
+                                {{ log.user.get_full_name|default:log.user.username }}
+                            {% else %}
+                                Anonymous
+                            {% endif %}
+                        </td>
+                        <td>{{ log.get_action_type_display }}</td>
+                        <td style="max-width:260px;">{{ log.details|truncatechars:60 }}</td>
+                        <td style="font-family:monospace; font-size:0.8rem;">{{ log.endpoint_path }}</td>
+                        <td style="font-family:monospace; font-size:0.8rem;">{{ log.ip_address|default:"—" }}</td>
+                        <td style="font-size:0.85rem;">{{ log.timestamp|date:"M d, H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% elif report_type == 'feedback' and feedbacks %}
+    <div class="glass-panel" style="padding:0; overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Category</th>
+                        <th>Comment</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in feedbacks %}
+                    <tr class="log-row">
+                        <td>#{{ f.id }}</td>
+                        <td>
+                            {% if f.user %}
+                                {{ f.user.get_full_name|default:f.user.username }}
+                            {% else %}
+                                Anonymous
+                            {% endif %}
+                        </td>
+                        <td>{{ f.rating }} / 5</td>
+                        <td>{{ f.get_category_display }}</td>
+                        <td style="max-width:260px;">{{ f.comment|truncatechars:60 }}</td>
+                        <td>
+                            {% if f.status == 'new' %}
+                            <span class="type-tag" style="background:rgba(77,119,255,0.15); color:var(--accent-cyan); border:1px solid rgba(77,119,255,0.3);">New</span>
+                            {% elif f.status == 'reviewed' %}
+                            <span class="type-tag" style="background:rgba(255,193,7,0.15); color:var(--accent-gold); border:1px solid rgba(255,193,7,0.3);">Reviewed</span>
+                            {% else %}
+                            <span class="type-tag" style="background:rgba(0,255,157,0.15); color:var(--accent-mint); border:1px solid rgba(0,255,157,0.3);">Resolved</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size:0.85rem;">{{ f.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-panel" style="padding:40px; text-align:center;">
+        <p style="font-size:0.9rem; color:var(--text-secondary);">No records found for the selected criteria.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

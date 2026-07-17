@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load map_extras %}
 
 {% block content %}
+{% load i18n map_extras %}
 
 <!-- Catalogue Header -->
 <section class="border-b border-slate-800/80 px-6 pt-12 pb-8">
@@ -9,9 +9,8 @@
         <div class="text-[11px] font-mono text-slate-500 mb-4 tracking-wide">
             Browse full catalogue / {{ datasets|length }} datasets / Open Access / IUC
         </div>
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">Catalogue</h1>
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">{% trans 'Catalogue' %}</h1>
         <p class="text-slate-400 max-w-3xl mb-6 leading-relaxed">Search, filter and discover IoT sensor deployments across transport, housing, heritage, energy, water, air quality, agriculture and health.</p>
-        <a href="{% url 'home' %}" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors">← Back to Atlas</a>
     </div>
 </section>
 
@@ -106,6 +105,10 @@
                             <span class="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2 py-1 rounded-full">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
                             </span>
+                            {% elif user.is_authenticated and dataset.researcher == user %}
+                            <span class="flex items-center gap-1.5 text-[11px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> {{ dataset.status|upper }}
+                            </span>
                             {% endif %}
                         </div>
                         <h3 class="text-base font-bold text-white mb-2 leading-snug">
@@ -117,11 +120,15 @@
                             <div><span class="text-slate-500 block">Period</span><span class="text-slate-200">{{ dataset|date_range }}</span></div>
                             <div><span class="text-slate-500 block">Frequency</span><span class="text-slate-200">{{ dataset.update_frequency }}</span></div>
                             <div><span class="text-slate-500 block">Downloads</span><span class="text-slate-200">{{ dataset.download_count }}</span></div>
+                            <div><span class="text-slate-500 block">Sensor</span><span class="text-slate-200">{{ dataset.sensor_type }}</span></div>
+                            <div><span class="text-slate-500 block">Units</span><span class="text-slate-200">{{ dataset.units_of_measurement }}</span></div>
+                            <div><span class="text-slate-500 block">License</span><span class="text-slate-200">{{ dataset.license }}</span></div>
+                            <div><span class="text-slate-500 block">Quality</span><span class="text-slate-200">⭐ {{ dataset.quality_score|floatformat:1 }}</span></div>
                         </div>
                         <div class="flex items-center justify-between border-t border-slate-800 pt-3">
                             <div class="text-xs text-slate-500">{{ dataset.researcher.get_full_name|default:dataset.researcher.username }}</div>
                             <div class="flex items-center gap-3">
-                                <span class="text-sm font-bold text-indigo-300">{{ dataset.quality_score|floatformat:1 }}</span>
+                                <a href="{% url 'dataset_download' dataset.id %}" class="text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors">Download →</a>
                                 <a href="{% url 'dataset_detail' dataset.id %}" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">View record →</a>
                             </div>
                         </div>

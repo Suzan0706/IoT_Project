@@ -1,5 +1,8 @@
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.shortcuts import redirect
+from django.contrib.sites.models import Site
 from .models import Profile
 
 User = get_user_model()
@@ -9,10 +12,27 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
     def is_open_for_signup(self, request, sociallogin):
         return True
 
+    def get_callback_url(self, request, app):
+        protocol = getattr(settings, 'ACCOUNT_DEFAULT_HTTP_PROTOCOL', 'http')
+        domain = Site.objects.get_current().domain
+        return f"{protocol}://{domain}/accounts/google/login/callback/"
+
     def pre_social_login(self, request, sociallogin):
         if request.user.is_authenticated and not sociallogin.is_existing:
             if request.user.email == sociallogin.account.extra_data.get('email'):
                 sociallogin.connect(request, request.user)
+                return redirect('home')
+
+        if sociallogin.is_existing:
+            return
+
+        email = sociallogin.account.extra_data.get('email')
+        if not email:
+            return
+
+        existing_user = User.objects.filter(email=email).first()
+        if existing_user:
+            sociallogin.connect(request, existing_user)
 
     def save_user(self, request, sociallogin, form=None):
         user = sociallogin.user
@@ -32,9 +52,17 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 username = f"{base_username}{counter}"
                 counter += 1
             user.username = username
+        user.is_staff = False
+        user.is_superuser = False
         user.save()
         Profile.objects.get_or_create(user=user)
         return user
 
     def get_connect_redirect_url(self, request):
         return '/'
+
+    def get_signup_redirect_url(self, request, sociallogin):
+        return '/role-redirect/'
+
+    def get_login_redirect_url(self, request, sociallogin):
+        return '/role-redirect/'

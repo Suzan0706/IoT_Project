@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:40px; max-width:1200px; margin-left:auto; margin-right:auto;">
+    <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+            <h1 style="font-size:1.75rem; font-weight:700; letter-spacing:0.01em;">Manage Categories</h1>
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Add or review research domain categories.</p>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:24px;">
+        {% for message in messages %}
+        <div class="messages {{ message.tags }}" style="margin-bottom:8px;">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="glass-panel" style="padding:24px; margin-bottom:24px;">
+        <form method="post" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+            {% csrf_token %}
+            <div style="flex:1; min-width:200px;">
+                <label style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); display:block; margin-bottom:6px;">New Category Name</label>
+                <input type="text" name="name" required placeholder="e.g., Agriculture" style="width:100%; padding:10px 12px; background:rgba(11,12,16,0.6); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius); color:var(--text-primary); font-family:var(--font-sans); font-size:0.9rem; outline:none;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding:10px 20px; font-size:0.85rem;">Add Category</button>
+        </form>
+    </div>
+
+    <div class="glass-panel" style="padding:0; overflow:hidden;">
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Slug</th>
+                        <th>Datasets</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in domains %}
+                    <tr class="log-row">
+                        <td style="font-weight:500;">{{ d.name }}</td>
+                        <td style="font-family:monospace; font-size:0.85rem;">{{ d.slug }}</td>
+                        <td>{{ d.dataset_count|default:"0" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="text-align:center; padding:40px; color:var(--text-secondary);">No categories found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

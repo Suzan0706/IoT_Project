@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="margin-top:24px; margin-bottom:40px;">
+    <div style="margin-bottom:24px;">
+        <h1 style="font-size:1.5rem; font-weight:700; letter-spacing:0.01em;">Give Feedback</h1>
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Help us improve the IoT Dataset Portal. Your feedback is linked to your account and reviewed by the team.</p>
+    </div>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if form.errors %}
+    <div class="messages error">
+        <p>Please correct the errors below.</p>
+    </div>
+    {% endif %}
+
+    <div class="glass-panel form-container">
+        <form method="post" class="cyber-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.rating.id_for_label }}">How would you rate your experience?</label>
+                {{ form.rating }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">Feedback category</label>
+                {{ form.category }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.comment.id_for_label }}">Comments <span style="font-weight:400; text-transform:none; letter-spacing:0; color:var(--text-muted);">(optional)</span></label>
+                {{ form.comment }}
+            </div>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button type="submit" class="submit-action-btn" style="flex:1; min-width:160px;">Submit Feedback</button>
+                {% if request.GET.next %}
+                <a href="{{ request.GET.next }}" class="btn btn-outline" style="flex:1; min-width:160px; text-align:center; display:inline-flex; align-items:center; justify-content:center;">Skip and continue</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

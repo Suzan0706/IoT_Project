@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,9 @@ SECRET_KEY = 'django-insecure-2d_vk21h8mav7**&^*tv4ce#@e_jxcm_xjkmr^x(y%_*g_nc4q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['testserver', '127.0.0.1', 'localhost']
+
+VERSION = '2026.07.02.01'
 
 
 # Application definition
@@ -51,12 +54,17 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'iot_portal.middleware.UserLanguageMiddleware',
+    'iot_portal.middleware.UserTimezoneMiddleware',
+    'iot_portal.middleware.NoCacheMiddleware',
+    'iot_portal.middleware.AdminAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'iot_portal.urls'
@@ -71,6 +79,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'iot_portal.context_processors.user_timezone_auto_detected',
+                'iot_portal.context_processors.user_theme_preference',
+                'iot_portal.context_processors.general_settings',
             ],
         },
     },
@@ -120,7 +131,16 @@ USE_I18N = True
 
 USE_TZ = True
 
-LOGIN_REDIRECT_URL = '/'
+LANGUAGES = [
+    ('en', 'English'),
+    ('sw', 'Kiswahili'),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+LOGIN_REDIRECT_URL = '/role-redirect/'
 LOGOUT_REDIRECT_URL = '/'
 
 AUTHENTICATION_BACKENDS = [
@@ -133,10 +153,15 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['full_name', 'email*', 'phone_number']
 ACCOUNT_SIGNUP_FORM_CLASS = 'catalogue.forms.SignupForm'
 ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_CALLBACK_URL = 'http://127.0.0.1:8000/accounts/google/login/callback/'
+
+GOOGLE_OAUTH_CLIENT_ID = os.getenv('GOOGLE_OAUTH_CLIENT_ID', '')
+GOOGLE_OAUTH_CLIENT_SECRET = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET', '')
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -146,7 +171,8 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
-        }
+            'prompt': 'select_account',
+        },
     }
 }
 

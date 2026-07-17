@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load i18n humanize %}
+<div style="margin-top:24px; margin-bottom:40px; max-width:1200px; margin-left:auto; margin-right:auto;">
+    <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+            {% if admin_profile and admin_profile.profile_picture %}
+            <div style="width:72px; height:72px; border-radius:50%; overflow:hidden; border:3px solid var(--border-glass-strong); flex-shrink:0; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <img src="{{ admin_profile.profile_picture.url }}" alt="{{ request.user.get_full_name|default:request.user.username }}" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            {% else %}
+            <div style="width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg, rgba(99,102,241,0.35), rgba(168,85,247,0.35)); display:flex; align-items:center; justify-content:center; color:#c7d2fe; font-weight:700; font-size:1.8rem; flex-shrink:0; border:3px solid var(--border-glass-strong); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                {{ request.user.username|first|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <h1 style="font-size:1.75rem; font-weight:700; letter-spacing:0.01em; margin:0;">Admin Dashboard</h1>
+                <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Welcome back, {{ request.user.get_full_name|default:request.user.username }}! System overview and management.</p>
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="{% url 'admin_user_management' %}" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px;">{% trans 'Manage Users' %}</a>
+            <a href="{% url 'admin_dataset_management' %}" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:8px;">{% trans 'Manage Datasets' %}</a>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:24px;">
+        {% for message in messages %}
+        <div class="messages {{ message.tags }}" style="margin-bottom:8px;">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:32px;">
+        <div class="glass-panel" style="padding:24px;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-cyan); margin-bottom:8px;">Total Users</div>
+            <div style="font-size:2rem; font-weight:700; color:var(--text-primary);">{{ total_users }}</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">+{{ new_users_this_month }} this month</div>
+        </div>
+        <div class="glass-panel" style="padding:24px;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-indigo); margin-bottom:8px;">Total Datasets</div>
+            <div style="font-size:2rem; font-weight:700; color:var(--text-primary);">{{ total_datasets }}</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">+{{ datasets_this_month }} this month</div>
+        </div>
+        <div class="glass-panel" style="padding:24px;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-mint); margin-bottom:8px;">Total Downloads</div>
+            <div style="font-size:2rem; font-weight:700; color:var(--text-primary);">{{ total_downloads|default:'0'|intcomma }}</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">All time</div>
+        </div>
+        <div class="glass-panel" style="padding:24px;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-gold); margin-bottom:8px;">Pending Review</div>
+            <div style="font-size:2rem; font-weight:700; color:var(--text-primary);">{{ pending_datasets }}</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">Datasets awaiting approval</div>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:20px; margin-bottom:32px;">
+        <div class="glass-panel" style="padding:24px; text-align:center;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-cyan); margin-bottom:10px;">Admin Profile</div>
+            {% if admin_profile and admin_profile.profile_picture %}
+            <div style="width:120px; height:120px; border-radius:50%; overflow:hidden; border:3px solid var(--border-glass-strong); margin:0 auto 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+                <img src="{{ admin_profile.profile_picture.url }}" alt="{{ request.user.get_full_name|default:request.user.username }}" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            {% else %}
+            <div style="width:120px; height:120px; border-radius:50%; background:linear-gradient(135deg, rgba(99,102,241,0.35), rgba(168,85,247,0.35)); display:flex; align-items:center; justify-content:center; color:#c7d2fe; font-weight:700; font-size:2.5rem; margin:0 auto 12px; border:3px solid var(--border-glass-strong); box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+                {{ request.user.username|first|upper }}
+            </div>
+            {% endif %}
+            <div style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:4px;">{{ request.user.get_full_name|default:request.user.username }}</div>
+            <div style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">@{{ request.user.username }}</div>
+            <a href="{% url 'admin_profile' %}" class="btn btn-outline" style="width:100%; text-align:center; justify-content:center;">Update Profile Picture</a>
+        </div>
+
+        <div class="glass-panel" style="padding:24px; text-align:center;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-indigo); margin-bottom:10px;">Quick Actions</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <a href="{% url 'admin_user_management' %}" class="btn btn-primary" style="width:100%; text-align:center; justify-content:center;">{% trans 'Manage Users' %}</a>
+                <a href="{% url 'admin_dataset_management' %}" class="btn btn-outline" style="width:100%; text-align:center; justify-content:center;">{% trans 'Manage Datasets' %}</a>
+                <a href="{% url 'register_dataset' %}" class="btn btn-outline" style="width:100%; text-align:center; justify-content:center;">Register Dataset</a>
+            </div>
+        </div>
+    </div>
+
+    {% if most_downloaded %}
+    <div class="glass-panel" style="padding:24px; margin-bottom:24px;">
+        <h3 style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:12px;">Most Downloaded Dataset</h3>
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:200px;">
+                <div style="font-size:1.1rem; font-weight:600; color:var(--text-primary);">{{ most_downloaded.title|default:'Untitled' }}</div>
+                <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">{{ most_downloaded.domain.name }} · {{ most_downloaded.researcher.get_full_name|default:most_downloaded.researcher.username }}</div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:1.5rem; font-weight:700; color:var(--accent-cyan);">{{ most_downloaded.download_count }}</div>
+                <div style="font-size:0.875rem; color:var(--text-secondary);">Downloads</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:24px; margin-bottom:32px;">
+        <div class="glass-panel" style="padding:24px;">
+            <h3 style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:16px;">Datasets by Category</h3>
+            {% if domain_stats %}
+            <div style="overflow-x:auto;">
+                <table class="cyber-data-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Datasets</th>
+                            <th>Downloads</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in domain_stats %}
+                        <tr class="log-row">
+                            <td style="font-weight:500;">{{ d.name }}</td>
+                            <td>{{ d.dataset_count }}</td>
+                            <td>{{ d.download_sum|default:'0'|intcomma }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p style="font-size:0.875rem; color:var(--text-secondary); text-align:center; padding:24px;">No categories found.</p>
+            {% endif %}
+        </div>
+
+        <div class="glass-panel" style="padding:24px;">
+            <h3 style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:16px;">Feedback Statistics</h3>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:0.875rem; color:var(--text-secondary);">Total Feedback</span>
+                    <span style="font-size:0.875rem; color:var(--text-primary); font-weight:500;">{{ feedback_stats.total }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:0.875rem; color:var(--text-secondary);">New</span>
+                    <span style="font-size:0.875rem; color:var(--accent-cyan); font-weight:500;">{{ feedback_stats.new }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:0.875rem; color:var(--text-secondary);">Reviewed</span>
+                    <span style="font-size:0.875rem; color:var(--accent-gold); font-weight:500;">{{ feedback_stats.reviewed }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:0.875rem; color:var(--text-secondary);">Resolved</span>
+                    <span style="font-size:0.875rem; color:var(--accent-mint); font-weight:500;">{{ feedback_stats.resolved }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-size:0.875rem; color:var(--text-secondary);">Average Rating</span>
+                    <span style="font-size:0.875rem; color:var(--text-primary); font-weight:500;">{{ feedback_stats.avg_rating|floatformat:1 }} / 5</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-panel" style="padding:24px; margin-bottom:24px;">
+        <h3 style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:16px;">Recent Activity</h3>
+        {% if recent_logs %}
+        <div style="overflow-x:auto;">
+            <table class="cyber-data-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Endpoint</th>
+                        <th>IP Address</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in recent_logs %}
+                    <tr class="log-row">
+                        <td>
+                            {% if log.user %}
+                                {{ log.user.get_full_name|default:log.user.username }}
+                            {% else %}
+                                Anonymous
+                            {% endif %}
+                        </td>
+                        <td>{{ log.get_action_type_display }}</td>
+                        <td style="font-family:monospace; font-size:0.8rem;">{{ log.endpoint_path }}</td>
+                        <td style="font-family:monospace; font-size:0.8rem;">{{ log.ip_address|default:'—' }}</td>
+                        <td style="font-size:0.8rem;">{{ log.timestamp|date:'M d, H:i' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="font-size:0.875rem; color:var(--text-secondary); text-align:center; padding:24px;">No recent activity.</p>
+        {% endif %}
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:20px;">
+        <a href="{% url 'admin_analytics_dashboard' %}" class="glass-panel" style="padding:24px; text-decoration:none; transition:transform .15s ease;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-purple); margin-bottom:8px;">{% trans 'Analytics' %}</div>
+            <div style="font-size:1.25rem; font-weight:700; color:var(--text-primary);">View Analytics</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">System-wide analytics and charts</div>
+        </a>
+        <a href="{% url 'admin_reports' %}" class="glass-panel" style="padding:24px; text-decoration:none; transition:transform .15s ease;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-gold); margin-bottom:8px;">{% trans 'Reports' %}</div>
+            <div style="font-size:1.25rem; font-weight:700; color:var(--text-primary);">Generate Reports</div>
+            <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">Export data as CSV</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

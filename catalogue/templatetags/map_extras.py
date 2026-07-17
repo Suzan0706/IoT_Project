@@ -54,3 +54,8 @@ def dataset_tags(dataset):
     if dataset.iuc_project_code:
         tags.append(dataset.iuc_project_code.upper())
     return tags
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+import os
 
 class Command(BaseCommand):
     help = 'Force provisions the default Site and Google SocialApp to clear the DoesNotExist crash screen'
@@ -7,6 +8,16 @@ class Command(BaseCommand):
         try:
             from django.contrib.sites.models import Site
             from allauth.socialaccount.models import SocialApp
+
+            client_id = os.getenv('GOOGLE_OAUTH_CLIENT_ID', '')
+            secret = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET', '')
+
+            if not client_id or not secret:
+                self.stderr.write(self.style.ERROR(
+                    "Google OAuth credentials not configured. Set GOOGLE_OAUTH_CLIENT_ID and "
+                    "GOOGLE_OAUTH_CLIENT_SECRET environment variables."
+                ))
+                return
 
             # 1. Setup site with proper local development domain
             site, created = Site.objects.get_or_create(
@@ -23,8 +34,8 @@ class Command(BaseCommand):
                 provider='google',
                 defaults={
                     'name': 'Google Auth',
-                    'client_id': 'placeholder-apps.googleusercontent.com',
-                    'secret': 'placeholder-secret-key-string',
+                    'client_id': client_id,
+                    'secret': secret,
                 }
             )
 
