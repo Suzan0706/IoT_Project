@@ -7,6 +7,7 @@ urlpatterns = [
     path('dev/auto-reload-status/', views.auto_reload_status, name='auto_reload_status'),
     path('browse/', views.browse_catalogue, name='browse_catalogue'),
     path('catalogue/', views.browse_catalogue, name='catalogue_search'),
+    path('filter-datasets/', views.filter_datasets, name='filter_datasets'),
     path('map/', views.map_view, name='map_view'),
     path('analytics/', views.admin_analytics_dashboard, name='admin_analytics_dashboard'),
     path('profile/', views.admin_profile_view, name='admin_profile'),

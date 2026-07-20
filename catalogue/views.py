@@ -180,12 +180,11 @@ def home(request):
         dataset_count=Count('datasets', filter=Q(datasets__status='live'))
     ).order_by('name')
 
-    datasets = live_datasets.select_related('domain', 'researcher').order_by('-created_at')[:20]
-
     search_query = request.GET.get('q', '').strip()
     domain_slug = request.GET.get('domain', '').strip()
     min_score = request.GET.get('min_score', '').strip()
 
+    datasets = live_datasets.select_related('domain', 'researcher').order_by('-created_at')
     if search_query:
         datasets = datasets.filter(
             Q(title__icontains=search_query) | Q(description__icontains=search_query)
@@ -197,6 +196,7 @@ def home(request):
             datasets = datasets.filter(quality_score__gte=float(min_score))
         except ValueError:
             pass
+    datasets = datasets[:20]
 
     total_downloads = live_datasets.aggregate(total=Sum('download_count'))['total'] or 0
     top_datasets = live_datasets.select_related('domain', 'researcher').order_by('-download_count')[:6]
@@ -1603,4 +1603,41 @@ def admin_reports(request):
     return render(request, 'admin_reports.html', context)
 
 
+def filter_datasets(request):
+    domain_slug = request.GET.get('domain', '').strip()
+    search_query = request.GET.get('q', '').strip()
+
+    live_datasets = Dataset.objects.filter(status='live').select_related('domain', 'researcher')
+
+    if search_query:
+        live_datasets = live_datasets.filter(
+            Q(title__icontains=search_query) | Q(description__icontains=search_query)
+        )
+    if domain_slug:
+        live_datasets = live_datasets.filter(domain__slug=domain_slug)
+
+    datasets = live_datasets.order_by('-created_at')[:20]
+
+    data = []
+    for dataset in datasets:
+        data.append({
+            'id': dataset.id,
+            'title': dataset.title,
+            'description': dataset.description,
+            'domain': dataset.domain.name,
+            'domain_slug': dataset.domain.slug,
+            'location': dataset.location,
+            'start_date': dataset.start_date.strftime('%Y-%m-%d') if dataset.start_date else '',
+            'end_date': dataset.end_date.strftime('%Y-%m-%d') if dataset.end_date else '',
+            'update_frequency': dataset.update_frequency,
+            'download_count': dataset.download_count,
+            'sensor_type': dataset.sensor_type,
+            'units_of_measurement': dataset.units_of_measurement,
+            'status': dataset.status,
+            'researcher': dataset.researcher.get_full_name() or dataset.researcher.username,
+            'department': dataset.department,
+            'quality_score': float(dataset.quality_score) if dataset.quality_score else 0,
+        })
+
+    return JsonResponse({'datasets': data})
 
