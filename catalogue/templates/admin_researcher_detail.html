@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load i18n humanize %}
+<div style="margin-top:24px; margin-bottom:40px; max-width:1200px; margin-left:auto; margin-right:auto;">
+    <div style="margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+            <h1 style="font-size:1.75rem; font-weight:700; letter-spacing:0.01em; margin:0;">Researcher Details</h1>
+            <p style="font-size:0.9rem; color:var(--text-secondary); margin-top:4px;">Profile information and activity overview.</p>
+        </div>
+        <a href="{% url 'admin_researcher_approval' %}" class="btn btn-outline" style="display:inline-flex; align-items:center; gap:8px;">Back to Approval List</a>
+    </div>
+
+    {% if messages %}
+    <div style="margin-bottom:24px;">
+        {% for message in messages %}
+        <div class="messages {{ message.tags }}" style="margin-bottom:8px;">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-bottom:32px;">
+        <div class="glass-panel" style="padding:24px;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-cyan); margin-bottom:16px;">Profile Information</div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Full Name</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ researcher.get_full_name|default:researcher.username }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Username</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">@{{ researcher.username }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Email</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ researcher.email }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Institution</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ profile.institution|default:'—' }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Department</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ profile.department|default:'—' }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Phone Number</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ profile.phone_number|default:'—' }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Research Interests</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem; text-align:right; max-width:60%;">{{ profile.research_interests|default:'—'|truncatechars:100 }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Registration Date</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ researcher.date_joined|date:'M d, Y H:i' }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0;">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Status</span>
+                    {% if profile.approval_status == 'pending' %}
+                    <span class="type-tag" style="background:rgba(255,193,7,0.15); color:var(--accent-gold); border:1px solid rgba(255,193,7,0.3);">Pending</span>
+                    {% elif profile.approval_status == 'approved' %}
+                    <span class="type-tag" style="background:rgba(0,255,157,0.15); color:var(--accent-mint); border:1px solid rgba(0,255,157,0.3);">Approved</span>
+                    {% elif profile.approval_status == 'rejected' %}
+                    <span class="type-tag" style="background:rgba(255,107,107,0.15); color:#ff6b6b; border:1px solid rgba(255,107,107,0.3);">Rejected</span>
+                    {% endif %}
+                </div>
+                {% if profile.reviewed_by %}
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Reviewed By</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ profile.reviewed_by.get_full_name|default:profile.reviewed_by.username }}</span>
+                </div>
+                {% endif %}
+                {% if profile.reviewed_at %}
+                <div style="display:flex; justify-content:space-between; padding:10px 0;">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Reviewed At</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ profile.reviewed_at|date:'M d, Y H:i' }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="glass-panel" style="padding:24px;">
+            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-indigo); margin-bottom:16px;">Account Activity</div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Last Login</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ researcher.last_login|date:'M d, Y H:i'|default:'Never' }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Date Joined</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ researcher.date_joined|date:'M d, Y H:i' }}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Is Active</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{% if researcher.is_active %}Yes{% else %}No{% endif %}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Is Staff</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{% if researcher.is_staff %}Yes{% else %}No{% endif %}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Is Superuser</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{% if researcher.is_superuser %}Yes{% else %}No{% endif %}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:10px 0;">
+                    <span style="color:var(--text-secondary); font-size:0.9rem;">Datasets Submitted</span>
+                    <span style="color:var(--text-primary); font-weight:500; font-size:0.9rem;">{{ submitted_datasets.count }}</span>
+                </div>
+            </div>
+            {% if profile.rejection_reason %}
+            <div style="margin-top:16px; padding:12px; background:rgba(255,107,107,0.1); border:1px solid rgba(255,107,107,0.3); border-radius:var(--radius);">
+                <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#ff6b6b; margin-bottom:6px;">Rejection Reason</div>
+                <p style="font-size:0.9rem; color:var(--text-secondary); margin:0;">{{ profile.rejection_reason }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if submitted_datasets %}
+    <div class="glass-panel" style="padding:24px; margin-bottom:24px;">
+        <h3 style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:16px;">Submitted Datasets</h3>
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; min-width:600px;">
+                <thead>
+                    <tr style="border-bottom:1px solid var(--border);">
+                        <th style="text-align:left; padding:10px; font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Title</th>
+                        <th style="text-align:left; padding:10px; font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Domain</th>
+                        <th style="text-align:left; padding:10px; font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Status</th>
+                        <th style="text-align:left; padding:10px; font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Quality</th>
+                        <th style="text-align:left; padding:10px; font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Downloads</th>
+                        <th style="text-align:left; padding:10px; font-size:0.75rem; font-weight:600; color:var(--text-secondary);">Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ds in submitted_datasets %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                        <td style="padding:10px; font-size:0.9rem; color:var(--text-primary);">{{ ds.title|truncatechars:50 }}</td>
+                        <td style="padding:10px; font-size:0.9rem; color:var(--text-secondary);">{{ ds.domain.name }}</td>
+                        <td style="padding:10px;">
+                            {% if ds.status == 'live' %}
+                            <span class="type-tag" style="background:rgba(0,255,157,0.15); color:var(--accent-mint); border:1px solid rgba(0,255,157,0.3);">Live</span>
+                            {% elif ds.status == 'pending' %}
+                            <span class="type-tag" style="background:rgba(255,193,7,0.15); color:var(--accent-gold); border:1px solid rgba(255,193,7,0.3);">Pending</span>
+                            {% else %}
+                            <span class="type-tag" style="background:rgba(95,95,95,0.2); color:var(--text-secondary); border:1px solid rgba(255,255,255,0.1);">Draft</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding:10px; font-size:0.9rem; color:var(--text-secondary);">{{ ds.quality_score }}</td>
+                        <td style="padding:10px; font-size:0.9rem; color:var(--text-secondary);">{{ ds.download_count }}</td>
+                        <td style="padding:10px; font-size:0.9rem; color:var(--text-secondary);">{{ ds.created_at|date:'M d, Y' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if audit_logs %}
+    <div class="glass-panel" style="padding:24px;">
+        <h3 style="font-size:1rem; font-weight:600; color:var(--text-primary); margin-bottom:16px;">Recent Audit Log</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            {% for log in audit_logs %}
+            <div style="padding:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div>
+                    <div style="font-size:0.9rem; font-weight:500; color:var(--text-primary);">{{ log.get_action_type_display }}</div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary);">{{ log.details|truncatechars:100 }}</div>
+                </div>
+                <span style="font-size:0.75rem; color:var(--text-muted);">{{ log.timestamp|date:'M d, Y H:i' }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="glass-panel" style="padding:24px; margin-top:24px;">
+        <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent-indigo); margin-bottom:16px;">Registration Timeline</div>
+        <div style="display:flex; flex-direction:column; gap:0;">
+            <div style="display:flex; gap:16px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:12px; height:12px; border-radius:50%; background:var(--accent-cyan); box-shadow:0 0 0 4px rgba(0,255,255,0.15);"></div>
+                    <div style="width:2px; flex:1; background:rgba(255,255,255,0.08); margin-top:4px;"></div>
+                </div>
+                <div>
+                    <div style="font-size:0.85rem; font-weight:600; color:var(--text-primary);">Account Created</div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary);">{{ researcher.date_joined|date:'M d, Y H:i' }}</div>
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:12px; height:12px; border-radius:50%; background:{% if profile.approval_status == 'pending' %}var(--accent-gold){% elif profile.approval_status == 'approved' %}var(--accent-mint){% elif profile.approval_status == 'rejected' %}#ff6b6b{% endif %}; box-shadow:0 0 0 4px rgba(255,255,255,0.05);"></div>
+                    <div style="width:2px; flex:1; background:rgba(255,255,255,0.08); margin-top:4px;"></div>
+                </div>
+                <div>
+                    <div style="font-size:0.85rem; font-weight:600; color:var(--text-primary);">
+                        {% if profile.approval_status == 'pending' %}Pending Approval{% elif profile.approval_status == 'approved' %}Approved{% elif profile.approval_status == 'rejected' %}Rejected{% endif %}
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary);">
+                        {% if profile.reviewed_at %}
+                        {{ profile.reviewed_at|date:'M d, Y H:i' }}
+                        {% else %}
+                        Awaiting review
+                        {% endif %}
+                    </div>
+                    {% if profile.reviewed_by %}
+                    <div style="font-size:0.75rem; color:var(--text-muted);">By {{ profile.reviewed_by.get_full_name|default:profile.reviewed_by.username }}</div>
+                    {% endif %}
+                    {% if profile.rejection_reason %}
+                    <div style="font-size:0.75rem; color:#ff6b6b; margin-top:4px;">Reason: {{ profile.rejection_reason }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; padding:12px 0;">
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,0.2);"></div>
+                </div>
+                <div>
+                    <div style="font-size:0.85rem; font-weight:600; color:var(--text-primary);">Current Status</div>
+                    <div style="font-size:0.8rem; color:var(--text-secondary);">
+                        {% if profile.approval_status == 'pending' %}Waiting for administrator review{% elif profile.approval_status == 'approved' %}Account active — researcher may log in{% elif profile.approval_status == 'rejected' %}Registration not approved{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

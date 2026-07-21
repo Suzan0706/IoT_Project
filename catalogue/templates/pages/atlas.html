@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>ARU IoT Home Research Dataset Catalogue</title>
+  <title>ARU IoT Dataset Research Catalogue</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -139,7 +139,6 @@
 
         <!-- 2. Main Hero Presentation Section -->
         <section class="space-y-5">
-            <p class="text-xs text-slate-500 font-mono">Catalogue Live / Edition 01 · MMXXVI / {{ total_registered|stringformat:"04d" }} entries / Open Access / Project 5 · Information Science · IUC</p>
             <h1 class="text-5xl font-extrabold text-white tracking-tight max-w-4xl leading-tight">The atlas of things that sense our cities.</h1>
             <p class="text-slate-400 max-w-3xl leading-relaxed">A curated, Dublin Core–aligned catalogue of IoT sensor deployments across ARU's IUC research projects transport, housing, heritage, energy, water and more engineered to make research data findable, accessible, interoperable and reusable.</p>
             <div class="flex flex-wrap items-center gap-4 pt-2">
@@ -190,7 +189,7 @@
                 <h3 class="text-xl font-bold text-white leading-snug">{{ featured.title }}</h3>
                 <p class="text-sm text-slate-400 leading-relaxed">{{ featured.description|truncatewords:35 }}</p>
                 <div class="text-xs text-slate-500 font-mono space-y-1">
-                    <p>Location: {{ featured.location }}</p>
+                    <p title="{{ featured.location }}">Location: {{ featured.location }}</p>
                     <p>Period: {{ featured.start_date|date:"Y-m-d" }} → {% if featured.end_date %}{{ featured.end_date|date:"Y-m-d" }}{% else %}ongoing{% endif %}</p>
                     <p>Frequency: {{ featured.update_frequency }}</p>
                     <p>Downloads: {{ featured.download_count }}</p>
@@ -214,7 +213,7 @@
                         <div>
                             <div class="text-xs text-slate-500 font-mono">{{ forloop.counter|stringformat:"02d" }}</div>
                             <div class="text-sm text-white font-medium mt-0.5">{{ dataset.domain.name }} / {{ dataset.start_date|date:"Y-m-d" }} — {{ dataset.title|truncatewords:8 }}</div>
-                            <div class="text-xs text-slate-500 mt-1">{{ dataset.location }}</div>
+                            <div class="text-xs text-slate-500 mt-1" title="{{ dataset.location }}">{{ dataset.location }}</div>
                         </div>
                         <span class="shrink-0 mt-1 px-2 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-300">{{ dataset.quality_score|floatformat:1 }} Score</span>
                     </li>
@@ -312,7 +311,7 @@
                 <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-3">
                     <div class="text-xs text-indigo-400 font-mono">Step 02</div>
                     <h4 class="text-white font-semibold">Validate & assign quality</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">Stewards review completeness, calibrate against the quality rubric and assign a persistent DOI for the record.</p>
+                    <p class="text-xs text-slate-400 leading-relaxed">Stewards review completeness, calibrate against the quality rubric, and ensure the record includes citation-ready metadata.</p>
                     <a href="{% url 'admin_analytics_dashboard' %}" class="inline-block text-xs text-indigo-300 hover:text-indigo-200 font-mono pt-2">Curate</a>
                 </div>
                 <div class="rounded-xl bg-cardDark border border-slate-800 p-5 space-y-3">

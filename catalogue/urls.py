@@ -48,5 +48,13 @@ urlpatterns = [
     path('portal-admin/settings/backups/', views.admin_settings_backups, name='admin_settings_backups'),
     path('portal-admin/settings/logs/', views.admin_settings_logs, name='admin_settings_logs'),
     path('portal-admin/reports/', views.admin_reports, name='admin_reports'),
+    path('portal-admin/researchers/', views.admin_researcher_approval, name='admin_researcher_approval'),
+    path('portal-admin/researchers/<int:user_id>/detail/', views.researcher_detail, name='researcher_detail'),
+    path('portal-admin/researchers/<int:user_id>/approve/', views.approve_researcher, name='approve_researcher'),
+    path('portal-admin/researchers/<int:user_id>/reject/', views.reject_researcher, name='reject_researcher'),
+    path('portal-admin/researchers/<int:user_id>/confirm-approve/', views.researcher_confirm_approve, name='researcher_confirm_approve'),
+    path('portal-admin/researchers/<int:user_id>/confirm-reject/', views.researcher_confirm_reject, name='researcher_confirm_reject'),
+    path('portal-admin/researchers/<int:user_id>/confirm-delete/', views.researcher_confirm_delete, name='researcher_confirm_delete'),
+    path('portal-admin/researchers/<int:user_id>/delete/', views.delete_researcher, name='delete_researcher'),
     path('role-redirect/', views.role_based_redirect, name='role_based_redirect'),
 ]

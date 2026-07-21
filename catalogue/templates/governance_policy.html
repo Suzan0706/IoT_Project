@@ -41,7 +41,7 @@
             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
                 <div class="bg-cardDark border border-slate-800 rounded-xl" style="padding:18px 20px; background:rgba(138,43,226,0.08); border-color:rgba(138,43,226,0.2);">
                     <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-purple); margin-bottom:6px;">Findable</p>
-                    <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;">Every dataset has a persistent identifier (DOI on approval) and rich, indexed metadata.</p>
+                    <p style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;">Every dataset has a persistent identifier field and rich, indexed metadata.</p>
                 </div>
                 <div class="bg-cardDark border border-slate-800 rounded-xl" style="padding:18px 20px; background:rgba(77,119,255,0.08); border-color:rgba(77,119,255,0.2);">
                     <p style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--accent-cyan); margin-bottom:6px;">Accessible</p>
@@ -142,7 +142,7 @@
                         <td class="mono-text">doi</td>
                         <td>dc:identifier</td>
                         <td style="color:var(--accent-gold); font-weight:600;">Optional</td>
-                        <td style="color:var(--text-secondary);">Reserved on approval.</td>
+                        <td style="color:var(--text-secondary);">Optional DOI identifier for published records.</td>
                     </tr>
                     <tr>
                         <td class="mono-text">researcher</td>
@@ -189,7 +189,7 @@
                 </div>
                 <div style="display:flex; align-items:center; gap:16px; padding:14px 18px; border-radius:var(--radius); background:rgba(255,255,255,0.02); border-left:3px solid var(--accent-red);">
                     <span class="mono-text" style="font-weight:700; color:var(--accent-red); min-width:80px;">1.0</span>
-                    <span style="font-size:0.9rem; color:var(--text-secondary);">Experimental: Prototype deployment; not suitable for downstream conclusions.</span>
+                    <span style="font-size:0.9rem; color:var(--text-secondary);">Pilot deployment: early-stage data, interpreted with appropriate caution.</span>
                 </div>
             </div>
         </div>
@@ -211,7 +211,7 @@
                 <div class="bg-cardDark border border-slate-800 rounded-xl" style="padding:18px; text-align:center; background:rgba(255,255,255,0.02);">
                     <span class="mono-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.06em;">03</span>
                     <p style="font-size:0.85rem; font-weight:600; margin-top:8px; margin-bottom:4px;">Publication</p>
-                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5;">Dataset becomes discoverable; DOI is reserved; download link is published.</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5;">Dataset becomes discoverable; DOI metadata is shown when available; download link is published.</p>
                 </div>
                 <div class="bg-cardDark border border-slate-800 rounded-xl" style="padding:18px; text-align:center; background:rgba(255,255,255,0.02);">
                     <span class="mono-text" style="font-size:0.75rem; font-weight:700; color:var(--accent-cyan); letter-spacing:0.06em;">04</span>

@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="margin-top:8px; margin-bottom:16px;">
-    <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-secondary);">PROJECT 5 ∙ INFORMATION SCIENCE ∙ IUC</p>
-</div>
-
 <div class="detail-layout">
     <!-- Left Column -->
     <div class="detail-main">
@@ -35,31 +31,31 @@
             </div>
             <div class="sidebar-row">
                 <span class="label">SENSOR TYPE</span>
-                <span class="value">{{ dataset.sensor_type }}</span>
+                <span class="value">{{ dataset.sensor_type|default:"Not specified" }}</span>
             </div>
             <div class="sidebar-row">
                 <span class="label">UNITS</span>
-                <span class="value">{{ dataset.units_of_measurement }}</span>
+                <span class="value">{{ dataset.units_of_measurement|default:"Not specified" }}</span>
             </div>
             <div class="sidebar-row">
                 <span class="label">LOCATION</span>
-                <span class="value">{{ dataset.location }}</span>
+                <span class="value" title="{{ dataset.location|default:'Not specified' }}">{{ dataset.location|default:"Not specified" }}</span>
             </div>
             <div class="sidebar-row">
                 <span class="label">IUC PROJECT</span>
-                <span class="value">{{ dataset.iuc_project_code }}</span>
+                <span class="value">{{ dataset.iuc_project_code|default:"Not specified" }}</span>
             </div>
             <div class="sidebar-row">
                 <span class="label">DEPARTMENT</span>
-                <span class="value">{{ dataset.department }}</span>
+                <span class="value">{{ dataset.department|default:"Not specified" }}</span>
             </div>
             <div class="sidebar-row">
                 <span class="label">LICENSE</span>
-                <span class="value">{{ dataset.license }}</span>
+                <span class="value">{{ dataset.license|default:"Not specified" }}</span>
             </div>
             <div class="sidebar-row">
                 <span class="label">OUTPUT FORMAT</span>
-                <span class="value">{{ dataset.output_format }}</span>
+                <span class="value">{{ dataset.output_format|default:"Not specified" }}</span>
             </div>
         </div>
 
@@ -67,15 +63,34 @@
             <h4>Technical Properties</h4>
             <div class="sidebar-row">
                 <span class="label">DIGITAL OBJECT IDENTIFIER (DOI)</span>
-                <span class="value">{{ dataset.doi|default:"10.0000/aru-iot-atlas-id" }}</span>
+                <span class="value">
+                    {% if dataset.doi %}
+                        {{ dataset.doi }}
+                    {% else %}
+                        Not assigned
+                    {% endif %}
+                </span>
             </div>
+            {% if dataset.doi and "10.1234/iuc-demo." in dataset.doi %}
+            <p class="text-xs text-slate-400 mt-2">This identifier is a simulated demonstration value and is not registered with an official DOI agency.</p>
+            {% endif %}
             <div class="sidebar-row">
                 <span class="label">REGISTRATION TIMELINE</span>
-                <span class="value">{{ dataset.start_date|date:"Y-m-d" }} → {{ dataset.end_date|date:"Y-m-d" }}</span>
+                <span class="value">
+                    {% if dataset.start_date and dataset.end_date %}
+                        {{ dataset.start_date|date:"Y-m-d" }} → {{ dataset.end_date|date:"Y-m-d" }}
+                    {% elif dataset.start_date %}
+                        {{ dataset.start_date|date:"Y-m-d" }} → Ongoing
+                    {% elif dataset.end_date %}
+                        Planned until {{ dataset.end_date|date:"Y-m-d" }}
+                    {% else %}
+                        {% if dataset.status == 'live' %}Approved{% elif dataset.status == 'pending' %}Pending{% else %}Not Approved{% endif %}
+                    {% endif %}
+                </span>
             </div>
             <div class="sidebar-row">
                 <span class="label">SENSOR RECORDING SPEED</span>
-                <span class="value">{{ dataset.update_frequency }}</span>
+                <span class="value">{{ dataset.update_frequency|default:"5 min" }}</span>
             </div>
             <div class="sidebar-row">
                 <span class="label">TOTAL ASSET DOWNLOADS</span>
@@ -83,14 +98,14 @@
             </div>
             <div class="sidebar-row">
                 <span class="label">VALIDATION GRADE SCORE</span>
-                <span class="value">⭐ {{ dataset.quality_score }}</span>
+                <span class="value">⭐ {{ dataset.quality_score|default:"4.0" }}</span>
             </div>
         </div>
 
         <div class="sidebar-card glass-panel">
             <h4>Researcher</h4>
             <div class="sidebar-row">
-                <span class="value">{{ dataset.researcher.get_full_name|default:dataset.researcher.username }}</span>
+                <span class="value">{{ dataset.lead_researcher|default:dataset.researcher.get_full_name|default:dataset.researcher.username }}</span>
             </div>
         </div>
     </aside>

@@ -116,7 +116,7 @@
                         </h3>
                         <p class="text-xs text-slate-400 leading-relaxed mb-4">{{ dataset.description|truncatewords:30 }}</p>
                         <div class="grid grid-cols-2 gap-2 text-xs mb-4">
-                            <div><span class="text-slate-500 block">Location</span><span class="text-slate-200">{{ dataset.location }}</span></div>
+                            <div><span class="text-slate-500 block">Location</span><span class="text-slate-200" title="{{ dataset.location }}">{{ dataset.location }}</span></div>
                             <div><span class="text-slate-500 block">Period</span><span class="text-slate-200">{{ dataset|date_range }}</span></div>
                             <div><span class="text-slate-500 block">Frequency</span><span class="text-slate-200">{{ dataset.update_frequency }}</span></div>
                             <div><span class="text-slate-500 block">Downloads</span><span class="text-slate-200">{{ dataset.download_count }}</span></div>

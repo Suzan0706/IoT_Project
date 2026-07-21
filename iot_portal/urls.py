@@ -22,7 +22,7 @@ from django.contrib.auth import views as auth_views
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from catalogue.forms import LoginForm
-from catalogue.views import custom_admin_login
+from catalogue.views import custom_admin_login, CustomLoginView, CustomSignupView
 
 
 def serve_sw(request):
@@ -41,7 +41,8 @@ urlpatterns = [
     re_path(r'^admin/$', lambda request: redirect('/dashboard/') if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser) else (redirect('user_dashboard') if request.user.is_authenticated else redirect('custom_admin_login'))),
     path('admin/login/', custom_admin_login, name='custom_admin_login'),
     path('admin/', admin.site.urls),
-    path('accounts/login/', auth_views.LoginView.as_view(authentication_form=LoginForm), name='login'),
+    path('accounts/login/', CustomLoginView.as_view(authentication_form=LoginForm), name='login'),
+    path('accounts/signup/', CustomSignupView.as_view(), name='account_signup'),
     path('accounts/', include('allauth.urls')),
     path('', include('catalogue.urls')),
     re_path(r'^sw\.js$', serve_sw),

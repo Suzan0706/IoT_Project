@@ -10,9 +10,6 @@
 <!-- HERO BANNER -->
 <section class="border-b border-slate-800/80 px-6 pt-12 pb-16">
     <div class="max-w-7xl mx-auto">
-        <div class="text-[11px] font-mono text-slate-500 mb-4 tracking-wide">
-            Catalogue Live / Edition 01 · MMXXVI / {{ total_registered|stringformat:"04d" }} entries / ISSN 0000-0000 · Open Access / Project 5 · Information Science · IUC
-        </div>
         <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
             The atlas of things that sense our cities.
         </h1>
@@ -68,7 +65,7 @@
                 <h3 class="text-base font-bold text-white mb-2 leading-snug">{{ dataset.title }}</h3>
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">{{ dataset.description|truncatewords:30 }}</p>
                 <div class="grid grid-cols-2 gap-2 text-xs mb-4">
-                    <div><span class="text-slate-500 block">Location</span><span class="text-slate-200">{{ dataset.location }}</span></div>
+                    <div><span class="text-slate-500 block">Location</span><span class="text-slate-200" title="{{ dataset.location }}">{{ dataset.location }}</span></div>
                     <div><span class="text-slate-500 block">Period</span><span class="text-slate-200">{{ dataset.start_date|date:"Y-m-d" }} → {{ dataset.end_date|date:"Y-m-d" }}</span></div>
                     <div><span class="text-slate-500 block">Frequency</span><span class="text-slate-200">{{ dataset.update_frequency }}</span></div>
                     <div><span class="text-slate-500 block">Downloads</span><span class="text-slate-200">{{ dataset.download_count }}</span></div>
@@ -158,7 +155,7 @@
                 <div>
                     <div class="text-[11px] text-slate-500 mb-0.5">{{ forloop.counter|stringformat:"02d" }} / {{ dataset.domain.name }}</div>
                     <div class="text-sm font-semibold text-white">{{ dataset.title }}</div>
-                    <div class="text-xs text-slate-500 mt-1">{{ dataset.location }}</div>
+                    <div class="text-xs text-slate-500 mt-1" title="{{ dataset.location }}">{{ dataset.location }}</div>
                 </div>
                 <div class="flex items-center gap-4">
                     <span class="text-xs text-slate-400">{{ dataset.quality_score|floatformat:1 }} ★</span>
@@ -227,7 +224,7 @@
             <div class="bg-[#11142b] border border-slate-800/80 rounded-xl p-6">
                 <div class="text-xs font-semibold text-indigo-300 mb-3">Step 03</div>
                 <h4 class="text-sm font-bold text-white mb-2">Publish & cite</h4>
-                <p class="text-xs text-slate-400 leading-relaxed mb-4">Your dataset gets a citable record, a DOI on request, and surfaces in search and the analytics dashboard.</p>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">The dataset appears in the public catalogue with citation-ready metadata and an optional DOI field.</p>
                 <a href="{% url 'browse_catalogue' %}" class="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors">Publish →</a>
             </div>
         </div>
@@ -274,7 +271,7 @@
                 <h3 class="text-base font-bold text-white mb-2 leading-snug">${ds.title}</h3>
                 <p class="text-xs text-slate-400 leading-relaxed mb-4">${ds.description.substring(0, 150)}${ds.description.length > 150 ? '…' : ''}</p>
                 <div class="grid grid-cols-2 gap-2 text-xs mb-4">
-                    <div><span class="text-slate-500 block">Location</span><span class="text-slate-200">${ds.location}</span></div>
+                    <div><span class="text-slate-500 block">Location</span><span class="text-slate-200" title="${ds.location}">${ds.location}</span></div>
                     <div><span class="text-slate-500 block">Period</span><span class="text-slate-200">${ds.start_date} → ${ds.end_date}</span></div>
                     <div><span class="text-slate-500 block">Frequency</span><span class="text-slate-200">${ds.update_frequency}</span></div>
                     <div><span class="text-slate-500 block">Downloads</span><span class="text-slate-200">${ds.download_count}</span></div>

@@ -39,7 +39,7 @@ class DatasetRegistrationForm(forms.ModelForm):
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Department name'}),
             'lead_researcher': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Your name or username'}),
             'data_file': forms.FileInput(attrs={'class': 'form-control'}),
-            'doi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'https://doi.org/…'}),
+            'doi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional DOI or record identifier'}),
         }
 
     def __init__(self, *args, **kwargs):

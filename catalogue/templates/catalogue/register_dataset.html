@@ -5,12 +5,9 @@
 <!-- HERO -->
 <section class="border-b border-slate-800/80 px-6 pt-12 pb-16">
     <div class="max-w-7xl mx-auto">
-        <div class="text-[11px] text-slate-500 mb-4 tracking-wide">
-            {% if editing %}Edit Dataset / Edition 01 · MMXXVI{% else %}Register a Dataset / Edition 01 · MMXXVI{% endif %} / Open Access / Project 5 · Information Science / IUC
-        </div>
         <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
             {% if editing %}Edit dataset{% else %}Register a dataset{% endif %}
-        </h1>
+        </h1
         <p class="text-slate-400 max-w-3xl mb-8 leading-relaxed">
             {% if editing %}Update the metadata for this dataset.{% else %}Submit a new IoT sensor deployment to the catalogue. Provide metadata about the sensor, location, period, units and IUC project. Catalogue stewards will review and curate before publication.{% endif %}
         </p>
@@ -152,6 +149,7 @@
                             <div>
                                 <label class="block text-xs text-slate-400 mb-2">DOI / Identifier <span class="text-slate-500 text-xs font-normal">(optional)</span></label>
                                 {{ form.doi }}
+                                <p class="text-xs text-slate-500 mt-1">Optional DOI or local dataset identifier. Leave blank for catalogue review.</p>
                             </div>
                         </div>
                     </div>

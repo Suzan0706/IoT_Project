@@ -9,7 +9,13 @@
         Welcome back — <span style="color:var(--accent-purple);">HOME</span>
     </h2>
 
-    {% if form.errors %}
+    {% if form.non_field_errors %}
+    <div class="messages error">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% elif form.errors %}
     <div class="messages error">
         <p>Invalid credentials. Please try again.</p>
     </div>
@@ -37,7 +43,7 @@
     </form>
 
     <p style="text-align:center; margin-top:16px; font-size:0.85rem; color:var(--text-secondary);">
-        Demo admin: <strong style="color:var(--text-primary);">admin</strong> / <strong style="color:var(--text-primary);">admin123</strong>
+        Administrator access is limited to authorised accounts only.
     </p>
 
     <p style="text-align:center; margin-top:8px; font-size:0.85rem; color:var(--text-secondary);">

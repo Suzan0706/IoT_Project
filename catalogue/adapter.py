@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from django.contrib.sites.models import Site
+from django.contrib import messages
 from .models import Profile
 
 User = get_user_model()
@@ -24,6 +25,17 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
                 return redirect('home')
 
         if sociallogin.is_existing:
+            user = sociallogin.user
+            try:
+                profile = user.profile
+                if profile.approval_status == 'pending':
+                    messages.error(request, 'Your account is pending administrator approval.')
+                    return redirect('login')
+                elif profile.approval_status == 'rejected':
+                    messages.error(request, 'Your registration request was not approved. Please contact the system administrator.')
+                    return redirect('login')
+            except Profile.DoesNotExist:
+                pass
             return
 
         email = sociallogin.account.extra_data.get('email')
@@ -55,7 +67,9 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         user.is_staff = False
         user.is_superuser = False
         user.save()
-        Profile.objects.get_or_create(user=user)
+        profile, _ = Profile.objects.get_or_create(user=user)
+        profile.approval_status = 'pending'
+        profile.save()
         return user
 
     def get_connect_redirect_url(self, request):

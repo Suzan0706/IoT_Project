@@ -2,20 +2,26 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.db.models import Q, Count, Avg, Sum, F, Case, When, IntegerField
+from django.db import transaction
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, date
+import calendar
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 import csv
 from django.conf import settings
-from .models import Dataset, Domain, AuditLog, Feedback, Profile, DatasetCategory, SensorType, SystemSetting, Backup, SystemLog
+from .models import Dataset, Domain, AuditLog, Feedback, Profile, DatasetCategory, SensorType, SystemSetting, Backup, SystemLog, Notification
 from .forms import DatasetForm, DatasetRegistrationForm, AdminProfileForm, LoginForm, SignupForm, FeedbackForm, UserAccountSettingsForm, GeneralSettingsForm, DatasetSettingsForm, DatasetCategoryForm, SensorTypeForm, ResearchDomainForm, UserSettingsForm, SecuritySettingsForm, BackupForm, ProfileSettingsForm, AccountSettingsForm, NotificationPreferencesForm, PrivacySettingsForm, AppearanceSettingsForm, LanguageSettingsForm, TimeZoneSettingsForm, ProfilePictureForm
 import json
 import os
 import time
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth.views import LoginView
+from allauth.account.views import SignupView
+from allauth.account import app_settings as allauth_settings
+from allauth.account.utils import complete_signup
 
 
 def admin_required(view_func):
@@ -571,23 +577,7 @@ def register_dataset(request):
             if not dataset.title:
                 dataset.title = f'Untitled dataset — {request.user.username} — {timezone.now().strftime("%Y-%m-%d")}'
             if not dataset.description:
-                dataset.description = 'No description provided.'
-            if not dataset.sensor_type:
-                dataset.sensor_type = 'Other'
-            if not dataset.iuc_project_code:
-                dataset.iuc_project_code = 'N/A'
-            if not dataset.output_format:
-                dataset.output_format = 'CSV'
-            if not dataset.location:
-                dataset.location = 'Not specified'
-            if not dataset.update_frequency:
-                dataset.update_frequency = 'N/A'
-            if not dataset.units_of_measurement:
-                dataset.units_of_measurement = 'N/A'
-            if not dataset.department:
-                dataset.department = 'Not specified'
-            if not dataset.license:
-                dataset.license = 'CC BY 4.0'
+                dataset.description = 'Description pending steward review.'
             dataset.save()
             messages.success(request, f'"{dataset.title}" was submitted for review. A steward will curate it before publication.')
 
@@ -686,23 +676,24 @@ def admin_analytics_dashboard(request):
         avg=Avg('download_count')
     )['avg'] or 0
 
-    # 12-month growth chart
-    twelve_months = [today - timedelta(days=30 * i) for i in range(11, -1, -1)]
-    month_labels = [d.strftime('%b') for d in twelve_months]
+    # 12-month growth chart — actual calendar months
+    month_labels = []
     monthly_registrations = []
-    for m in twelve_months:
-        month_start = m.replace(day=1)
-        if m.month == 12:
-            month_end = m.replace(year=m.year + 1, month=1, day=1) - timedelta(days=1)
-        else:
-            month_end = m.replace(month=m.month + 1, day=1) - timedelta(days=1)
-        monthly_registrations.append(
-            Dataset.objects.filter(created_at__date__gte=month_start, created_at__date__lte=month_end).count()
-        )
     cumulative_growth = []
     running = 0
-    for val in monthly_registrations:
-        running += val
+    for i in range(11, -1, -1):
+        year = today.year
+        month = today.month - i
+        while month <= 0:
+            month += 12
+            year -= 1
+        month_start = date(year, month, 1)
+        last_day = calendar.monthrange(year, month)[1]
+        month_end = date(year, month, last_day)
+        month_labels.append(month_start.strftime('%b'))
+        count = Dataset.objects.filter(created_at__date__gte=month_start, created_at__date__lte=month_end).count()
+        monthly_registrations.append(count)
+        running += count
         cumulative_growth.append(running)
 
     # Quality buckets
@@ -1640,4 +1631,281 @@ def filter_datasets(request):
         })
 
     return JsonResponse({'datasets': data})
+
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+    authentication_form = LoginForm
+
+    def form_valid(self, form):
+        user = form.get_user()
+        if user.is_staff or user.is_superuser:
+            return super().form_valid(form)
+        profile, _ = Profile.objects.get_or_create(user=user)
+        if profile.approval_status == 'pending':
+            form.add_error(None, 'Your account is pending administrator approval.')
+            return self.form_invalid(form)
+        elif profile.approval_status == 'rejected':
+            form.add_error(None, 'Your registration request was not approved. Please contact the system administrator.')
+            return self.form_invalid(form)
+        return super().form_valid(form)
+
+
+class CustomSignupView(SignupView):
+    def form_valid(self, form):
+        self.user = form.save(self.request)
+        from allauth.account.signals import user_signed_up
+        user_signed_up.send(sender=self.user.__class__, request=self.request, user=self.user)
+        messages.success(self.request, "Your account has been created successfully and is awaiting administrator approval. You will be able to access the system once your account has been approved.")
+        return redirect('login')
+
+
+def admin_researcher_approval(request):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    researchers = User.objects.all().select_related('profile').order_by('-date_joined')
+
+    for researcher in researchers:
+        Profile.objects.get_or_create(user=researcher)
+
+    search_query = request.GET.get('q', '').strip()
+    status_filter = request.GET.get('status', '').strip()
+    institution_filter = request.GET.get('institution', '').strip()
+    date_filter = request.GET.get('date', '').strip()
+
+    if search_query:
+        researchers = researchers.filter(
+            Q(username__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(profile__institution__icontains=search_query)
+        )
+    if status_filter:
+        researchers = researchers.filter(profile__approval_status=status_filter)
+    if institution_filter:
+        researchers = researchers.filter(profile__institution__icontains=institution_filter)
+    if date_filter:
+        researchers = researchers.filter(date_joined__date=date_filter)
+
+    total_researchers = User.objects.count()
+    pending_count = User.objects.filter(profile__approval_status='pending').count()
+    approved_count = User.objects.filter(profile__approval_status='approved').count()
+    rejected_count = User.objects.filter(profile__approval_status='rejected').count()
+
+    institutions = Profile.objects.exclude(institution__isnull=True).exclude(institution__exact='').values_list('institution', flat=True).distinct().order_by('institution')
+
+    context = {
+        'researchers': researchers,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'institution_filter': institution_filter,
+        'date_filter': date_filter,
+        'total_researchers': total_researchers,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'rejected_count': rejected_count,
+        'institutions': institutions,
+        'status_choices': Profile.APPROVAL_STATUS_CHOICES,
+    }
+    return render(request, 'admin_researcher_approval.html', context)
+
+
+def approve_researcher(request, user_id):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    if request.method == 'POST':
+        researcher = get_object_or_404(User, pk=user_id)
+        try:
+            profile = researcher.profile
+        except Profile.DoesNotExist:
+            profile = Profile.objects.create(user=researcher)
+        profile.approval_status = 'approved'
+        profile.rejection_reason = ''
+        profile.reviewed_by = request.user
+        profile.reviewed_at = timezone.now()
+        profile.save()
+
+        AuditLog.objects.create(
+            user=request.user,
+            action_type='auth_event',
+            ip_address=get_client_ip(request),
+            endpoint_path=f'/portal-admin/researchers/{user_id}/approve/',
+            details=f'Approved researcher account: {researcher.get_full_name() or researcher.username} ({researcher.email})'
+        )
+
+        try:
+            from catalogue.notifications import create_notification
+            create_notification(
+                user=researcher,
+                title='Account Approved',
+                message=f'Your account has been approved. You can now log in and access the system.',
+                notification_type='success',
+                send_email=True,
+            )
+        except Exception:
+            pass
+
+        messages.success(request, f'Researcher {researcher.get_full_name() or researcher.username} has been approved successfully.')
+
+    return redirect('admin_researcher_approval')
+
+
+def reject_researcher(request, user_id):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    if request.method == 'POST':
+        researcher = get_object_or_404(User, pk=user_id)
+        rejection_reason = request.POST.get('rejection_reason', '').strip()
+        try:
+            profile = researcher.profile
+        except Profile.DoesNotExist:
+            profile = Profile.objects.create(user=researcher)
+        profile.approval_status = 'rejected'
+        profile.rejection_reason = rejection_reason
+        profile.reviewed_by = request.user
+        profile.reviewed_at = timezone.now()
+        profile.save()
+
+        AuditLog.objects.create(
+            user=request.user,
+            action_type='auth_event',
+            ip_address=get_client_ip(request),
+            endpoint_path=f'/portal-admin/researchers/{user_id}/reject/',
+            details=f'Rejected researcher account: {researcher.get_full_name() or researcher.username} ({researcher.email}). Reason: {rejection_reason or "No reason provided"}'
+        )
+
+        try:
+            from catalogue.notifications import create_notification
+            create_notification(
+                user=researcher,
+                title='Account Registration Not Approved',
+                message=f'Your registration request was not approved. Please contact the system administrator for more information.',
+                notification_type='warning',
+                send_email=True,
+            )
+        except Exception:
+            pass
+
+        messages.success(request, f'Researcher {researcher.get_full_name() or researcher.username} has been rejected.')
+
+    return redirect('admin_researcher_approval')
+
+
+def researcher_detail(request, user_id):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    researcher = get_object_or_404(User, pk=user_id)
+    try:
+        profile = researcher.profile
+    except Profile.DoesNotExist:
+        profile = None
+
+    submitted_datasets = Dataset.objects.filter(researcher=researcher).select_related('domain').order_by('-created_at')
+
+    audit_logs = AuditLog.objects.filter(user=researcher).select_related('user').order_by('-timestamp')[:20]
+
+    context = {
+        'researcher': researcher,
+        'profile': profile,
+        'submitted_datasets': submitted_datasets,
+        'audit_logs': audit_logs,
+    }
+    return render(request, 'admin_researcher_detail.html', context)
+
+
+def researcher_confirm_approve(request, user_id):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    researcher = get_object_or_404(User, pk=user_id)
+    context = {
+        'researcher': researcher,
+        'action': 'approve',
+    }
+    return render(request, 'admin_researcher_confirm.html', context)
+
+
+def researcher_confirm_reject(request, user_id):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    researcher = get_object_or_404(User, pk=user_id)
+    context = {
+        'researcher': researcher,
+        'action': 'reject',
+    }
+    return render(request, 'admin_researcher_confirm.html', context)
+
+
+def researcher_confirm_delete(request, user_id):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    researcher = get_object_or_404(User, pk=user_id)
+    if researcher.is_superuser:
+        messages.error(request, 'Cannot delete a superuser account.')
+        return redirect('admin_researcher_approval')
+    if researcher == request.user:
+        messages.error(request, 'Cannot delete your own account.')
+        return redirect('admin_researcher_approval')
+
+    context = {
+        'researcher': researcher,
+        'action': 'delete',
+    }
+    return render(request, 'admin_researcher_confirm.html', context)
+
+
+def delete_researcher(request, user_id):
+    if not request.user.is_authenticated or not (request.user.is_staff or request.user.is_superuser):
+        return render(request, '403.html', status=403)
+
+    if request.method == 'POST':
+        try:
+            researcher = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            messages.warning(request, 'This researcher account no longer exists. It may have already been deleted.')
+            return redirect('admin_researcher_approval')
+
+        if researcher.is_superuser:
+            messages.error(request, 'Cannot delete a superuser account.')
+            return redirect('admin_researcher_approval')
+
+        if researcher == request.user:
+            messages.error(request, 'Cannot delete your own account.')
+            return redirect('admin_researcher_approval')
+
+        researcher_name = researcher.get_full_name() or researcher.username
+        researcher_email = researcher.email
+
+        AuditLog.objects.create(
+            user=request.user,
+            action_type='auth_event',
+            ip_address=get_client_ip(request),
+            endpoint_path=f'/portal-admin/researchers/{user_id}/delete/',
+            details=f'Deleted researcher account: {researcher_name} ({researcher_email})'
+        )
+
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute('DELETE FROM catalogue_subscription WHERE user_id = %d' % researcher.id)
+
+        with transaction.atomic():
+            AuditLog.objects.filter(user=researcher).delete()
+            Dataset.objects.filter(researcher=researcher).delete()
+            Notification.objects.filter(user=researcher).delete()
+            Feedback.objects.filter(user=researcher).delete()
+            try:
+                researcher.profile.delete()
+            except Profile.DoesNotExist:
+                pass
+            researcher.delete()
+        messages.success(request, f'Researcher {researcher_name} has been deleted successfully.')
+
+    return redirect('admin_researcher_approval')
 

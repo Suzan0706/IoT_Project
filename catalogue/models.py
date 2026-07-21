@@ -5,6 +5,12 @@ from zoneinfo import available_timezones
 
 
 class Profile(models.Model):
+    APPROVAL_STATUS_CHOICES = [
+        ('pending', 'Pending Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
     THEME_CHOICES = [
         ('light', 'Light'),
         ('dark', 'Dark'),
@@ -33,9 +39,18 @@ class Profile(models.Model):
     preferred_language = models.CharField(max_length=10, choices=LANGUAGE_CHOICES, default='en')
     time_zone = models.CharField(max_length=64, choices=[(tz, tz) for tz in sorted(available_timezones())], default='Africa/Dar_es_Salaam')
     time_zone_auto_detected = models.BooleanField(default=False)
+    approval_status = models.CharField(max_length=20, choices=APPROVAL_STATUS_CHOICES, default='pending')
+    rejection_reason = models.TextField(blank=True)
+    research_interests = models.TextField(blank=True)
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_profiles')
+    reviewed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} profile"
+
+    @property
+    def is_approved(self):
+        return self.approval_status == 'approved'
 
 
 class Domain(models.Model):
